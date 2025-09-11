@@ -1,6 +1,14 @@
 import streamlit as st
 import pickle
 
+
+img1 = 'logo_nb.png'
+img2 = 'logo2.png'
+img3 = 'logo3.png'
+
+
+
+
 st.markdown("# Predictive Analytics 🎯")
 
 st.sidebar.markdown("# Predictive Analytics 🎯")
@@ -38,3 +46,53 @@ if st.button('Predict!'):
 # 
 ⚠️ Add some visualizations to help understanding what the predictions mean...
 """
+
+
+
+
+### Logo
+img1 = 'logo_nb.png'
+st.logo(img1, size= "large", icon_image=None)  
+#######################################
+
+
+gender = st.radio(
+    "Gender",
+    ("Male", "Female"),
+)
+#########################################
+
+
+age = st.number_input(
+    "Age (year)", value=None, placeholder="Type a number...", step=1, format="%d"
+)
+st.write("The current number is ", age)
+
+
+height = st.number_input(
+    "Height (m)", value=None, placeholder="Type a number...", step=0.01, format="%.2f"
+)
+st.write("The current number is %.2f" % height)
+
+
+weight = st.number_input(
+    "Weight (kg)", value=None, placeholder="Type a number...", step=0.5, format="%.1f"
+)
+st.write("The current number is %.1f" % weight)
+##########################################
+
+q1 = st.selectbox(
+    "Q1",
+    ("0: xxxxxxxxxx", "1: xxxxxxxxxxxx", "2: xxxxxxxxxxxxxxx")
+)
+
+q2 = st.selectbox(
+    "Q2",
+    ("0: xxxxxxxxxx", "1: xxxxxxxxxxxx", "2: xxxxxxxxxxxxxxx")
+)
+
+q3 = st.selectbox(
+    "Q3",
+    ("0: xxxxxxxxxx", "1: xxxxxxxxxxxx", "2: xxxxxxxxxxxxxxx")
+)
+    
