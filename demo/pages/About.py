@@ -35,6 +35,8 @@ img3 = 'logo3.png'
 ### Logo
 img1 = 'logo_nb.png'
 st.logo(img1, size= "large", icon_image=None)  
+img2 = "SU_large.png"
+st.sidebar.image(img2)
 #######################################
 
 
