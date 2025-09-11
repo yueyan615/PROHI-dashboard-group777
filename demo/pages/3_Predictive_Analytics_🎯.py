@@ -9,43 +9,43 @@ img3 = 'logo3.png'
 
 
 
-st.markdown("# Predictive Analytics 🎯")
+# st.markdown("# Predictive Analytics 🎯")
 
-st.sidebar.markdown("# Predictive Analytics 🎯")
+# st.sidebar.markdown("# Predictive Analytics 🎯")
 
-"""
-⚠️ Add here some predictive analytics with Widgets and Plots
-"""
+# """
+# ⚠️ Add here some predictive analytics with Widgets and Plots
+# """
 
-st.write("# Example of model prediction")
+# st.write("# Example of model prediction")
 
-# Load model
-pre_trained_model_path = "./assets/trained_model.pickle"
-loaded_model = None # This will be replaced by the trained model in the pickle 
+# # Load model
+# pre_trained_model_path = "./assets/trained_model.pickle"
+# loaded_model = None # This will be replaced by the trained model in the pickle 
 
-with open(pre_trained_model_path, "rb") as readFile:
-    loaded_model = pickle.load(readFile)
+# with open(pre_trained_model_path, "rb") as readFile:
+#     loaded_model = pickle.load(readFile)
 
 
-# COLUMNS
-left_column, right_column = st.columns(2)
+# # COLUMNS
+# left_column, right_column = st.columns(2)
 
-user_data = []
-# Call Streamlit functions inside a "with" block to keep it in a column:
-with left_column:
-    length = st.slider("Sepal Length", min_value=4.0, max_value=9.0, value = 5.0)
-with right_column:
-    width = st.slider("Sepal Width", min_value=1.5, max_value=4.0, value = 3.0)
+# user_data = []
+# # Call Streamlit functions inside a "with" block to keep it in a column:
+# with left_column:
+#     length = st.slider("Sepal Length", min_value=4.0, max_value=9.0, value = 5.0)
+# with right_column:
+#     width = st.slider("Sepal Width", min_value=1.5, max_value=4.0, value = 3.0)
 
-if st.button('Predict!'):
-    user_data = [[length, width]]
-    prediction = loaded_model.predict(user_data)
-    st.write(f"The predicted value for data {user_data} is {prediction}")
+# if st.button('Predict!'):
+#     user_data = [[length, width]]
+#     prediction = loaded_model.predict(user_data)
+#     st.write(f"The predicted value for data {user_data} is {prediction}")
 
-"""
-# 
-⚠️ Add some visualizations to help understanding what the predictions mean...
-"""
+# """
+# # 
+# ⚠️ Add some visualizations to help understanding what the predictions mean...
+# """
 
 
 
@@ -72,13 +72,21 @@ st.write("The current number is ", age)
 height = st.number_input(
     "Height (m)", value=None, placeholder="Type a number...", step=0.01, format="%.2f"
 )
-st.write("The current number is %.2f" % height)
+if height is not None:
+    st.write("The current number is %.2f" % height)
+else:
+    st.write("The current number is None")
+
 
 
 weight = st.number_input(
     "Weight (kg)", value=None, placeholder="Type a number...", step=0.5, format="%.1f"
 )
-st.write("The current number is %.1f" % weight)
+if weight is not None:
+    st.write("The current number is %.1f" % weight)
+else:
+    st.write("The current number is None")
+
 ##########################################
 
 q1 = st.selectbox(
