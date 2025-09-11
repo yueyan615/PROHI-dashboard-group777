@@ -12,7 +12,7 @@ Include the name, logo and images refering to your project
 
 ## Introduction
 
-[Project ] is an interactive web dashboard to.... 
+[Project: Obesity-Vision] is an interactive web dashboard to....
 
 The problem detected was...
 
@@ -34,7 +34,7 @@ Tested on Python 3.12.7 with the following packages:
 
 Run the commands below in a terminal to configure the project and install the package dependencies for the first time.
 
-If you are using Mac, you may need to follow install Xcode. Check the official Streamlit documentation [here](https://docs.streamlit.io/get-started/installation/command-line#prerequisites). 
+If you are using Mac, you may need to follow install Xcode. Check the official Streamlit documentation [Streamlit](https://docs.streamlit.io/get-started/installation/command-line#prerequisites).
 
 1. Create the environment with `python -m venv env`
 2. Activate the virtual environment for Python
@@ -49,7 +49,7 @@ If you are using Mac, you may need to follow install Xcode. Check the official S
 
 To run the dashboard execute the following command:
 
-```
+``` bash
 > streamlit run Dashboard.py
 # If the command above fails, use:
 > python -m streamlit run Dashboard.py
