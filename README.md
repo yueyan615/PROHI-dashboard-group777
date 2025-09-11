@@ -66,3 +66,4 @@ This logic resembles the expected pipeline, where the jupyter notebooks are used
 _Zsolt Fehér_
 _Weiqi Kong_
 _Christoffer Brändefors_
+_Yueyan Li_
