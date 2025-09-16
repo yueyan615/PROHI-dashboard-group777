@@ -1,42 +1,9 @@
 import streamlit as st
 
-img1 = 'logo_nb.png'
-img2 = 'logo2.png'
-img3 = 'logo3.png'
-
-
-### Sidebar
-# with st.sidebar:
-
-    # img2 = 'logo3.png'
-    # img_body = st.image(img2, 
-    #                     use_container_width = True
-    #                     )
-    
-#     add_selectbox = st.selectbox(
-#     "How would you like to be contacted?",
-#     ("Email", "Home phone", "Mobile phone")
-# )
-    
-#     add_radio = st.radio(
-#         "Choose a shipping method",
-#         ("Standard (5-15 days)", "Express (2-5 days)")
-#     )
-   
-    # st.page_link("DV.py", label="Home", icon="🏠")
-    # st.page_link(".streamlit/pages/page_1.py", label="Page 1", icon="1️⃣")
-    # st.page_link(".streamlit/pages/page_2.py", label="Page 2", icon="2️⃣")
-
-   
-#######################################
-
-
 
 ### Logo
 img1 = 'logo_nb.png'
 st.logo(img1, size= "large", icon_image=None)  
-img2 = "SU_large.png"
-st.sidebar.image(img2)
 #######################################
 
 
