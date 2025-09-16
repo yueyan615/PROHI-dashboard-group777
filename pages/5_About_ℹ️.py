@@ -13,7 +13,7 @@ st.set_page_config(
 img1 = './img/logo_nb.png'
 st.logo(img1, size= "large", icon_image=None)  
 
-st.sidebar.markdown("# About ℹ️")
+# st.sidebar.markdown("# About ℹ️")
 
 
 ############################ MAIN BODY

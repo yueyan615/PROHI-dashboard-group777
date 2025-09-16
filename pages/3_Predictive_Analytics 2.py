@@ -13,7 +13,7 @@ st.set_page_config(
 img1 = './img/logo_nb.png'
 st.logo(img1, size= "large", icon_image=None)  
 
-st.sidebar.markdown("# Predictive Analytics 🎯")
+# st.sidebar.markdown("# Predictive Analytics 🎯")
 
 
 ############################ MAIN BODY
@@ -65,62 +65,59 @@ df = pd.read_csv(file_name)
 ### Example of input widgets
 st.markdown("### Do some presentation here...")
 
-with st.form("my_form"):
-    # slider_val = st.slider("Form slider")
-    # checkbox_val = st.checkbox("Form checkbox")
 
-    gender = st.radio(
-    "Gender", ("Male", "Female"),
-    )
+gender = st.radio(
+"Gender", ("Male", "Female"),
+)
 
-    age = st.number_input(
-        "Age (year)", value=None, placeholder="Type a number...", step=1, format="%d"
-    )
-    st.write("The current number is ", age)
+age = st.number_input(
+    "Age (year)", value=None, placeholder="Type a number...", step=1, format="%d"
+)
+st.write("The current number is ", age)
 
 
-    height = st.number_input(
-        "Height (m)", value=None, placeholder="Type a number...", step=0.01, format="%.2f"
-    )
-    if height is not None:
-        st.write("The current number is %.2f" % height)
-    else:
-        st.write("The current number is None")
+height = st.number_input(
+    "Height (m)", value=None, placeholder="Type a number...", step=0.01, format="%.2f"
+)
+if height is not None:
+    st.write("The current number is %.2f" % height)
+else:
+    st.write("The current number is None")
 
 
-    weight = st.number_input(
-        "Weight (kg)", value=None, placeholder="Type a number...", step=0.5, format="%.1f"
-    )
-    if weight is not None:
-        st.write("The current number is %.1f" % weight)
-    else:
-        st.write("The current number is None")
+weight = st.number_input(
+    "Weight (kg)", value=None, placeholder="Type a number...", step=0.5, format="%.1f"
+)
+if weight is not None:
+    st.write("The current number is %.1f" % weight)
+else:
+    st.write("The current number is None")
 
-    ##########################################
+##########################################
 
-    q1 = st.selectbox(
-        "Q1",
-        ("0: xxxxxxxxxx", "1: xxxxxxxxxxxx", "2: xxxxxxxxxxxxxxx")
-    )
+q1 = st.selectbox(
+    "Q1",
+    ("0: xxxxxxxxxx", "1: xxxxxxxxxxxx", "2: xxxxxxxxxxxxxxx")
+)
 
-    q2 = st.selectbox(
-        "Q2",
-        ("0: xxxxxxxxxx", "1: xxxxxxxxxxxx", "2: xxxxxxxxxxxxxxx")
-    )
+q2 = st.selectbox(
+    "Q2",
+    ("0: xxxxxxxxxx", "1: xxxxxxxxxxxx", "2: xxxxxxxxxxxxxxx")
+)
 
-    q3 = st.selectbox(
-        "Q3",
-        ("0: xxxxxxxxxx", "1: xxxxxxxxxxxx", "2: xxxxxxxxxxxxxxx")
-    )
+q3 = st.selectbox(
+    "Q3",
+    ("0: xxxxxxxxxx", "1: xxxxxxxxxxxx", "2: xxxxxxxxxxxxxxx")
+)
     
+if st.button('Predict🎯'):
+    user_data = [[length, width]]
+    prediction = loaded_model.predict(user_data)
+    st.write(f"The predicted value for data {user_data} is {prediction}")
 
 
 
 
-    # Every form must have a submit button.
-    pred = st.form_submit_button("Predict🎯")
-    # if pred:
-    #     st.write("slider", slider_val, "checkbox", checkbox_val)
 
 
 
