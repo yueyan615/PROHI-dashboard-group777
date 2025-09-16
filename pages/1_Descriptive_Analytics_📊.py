@@ -28,17 +28,14 @@ Add here some descriptive analytics with Widgets and Plots
 🔗 Link: <https://plotly.com/python/scientific-charts/>
 """
 
-
+# load the dataset
+file_name = './assets/ObesityDataSet_cleaned.csv'
+df = pd.read_csv(file_name)
 
 ########################### 1
 
 ### Create a CSV viewer
 """## 1. Obesity Dataset (cleaned)"""
-
-# load the dataset
-file_name = './assets/ObesityDataSet_cleaned.csv'
-df = pd.read_csv(file_name)
-
 
 # display the url
 DATA_URL = "https://archive.ics.uci.edu/dataset/544/estimation+of+obesity+levels+based+on+eating+habits+and+physical+condition"
