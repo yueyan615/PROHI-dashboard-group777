@@ -1,5 +1,10 @@
 import streamlit as st
 
+st.set_page_config(
+    # page_title="Obesity Dashboard",
+    page_icon="logo1.png",
+)
+
 
 ### Logo
 img1 = 'logo_nb.png'
@@ -11,7 +16,7 @@ st.logo(img1, size= "large", icon_image=None)
 
 st.markdown("# Descriptive Analytics 📊")
 
-st.sidebar.markdown("# Descriptive Analytics 📊")
+# st.sidebar.markdown("# Descriptive Analytics 📊")
 
 """
 Add here some descriptive analytics with Widgets and Plots

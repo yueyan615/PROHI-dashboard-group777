@@ -1,10 +1,10 @@
 import streamlit as st
 import pickle
 
-
-img1 = 'logo_nb.png'
-img2 = 'logo2.png'
-img3 = 'logo3.png'
+st.set_page_config(
+    # page_title="Obesity Dashboard",
+    page_icon="logo1.png",
+)
 
 
 
