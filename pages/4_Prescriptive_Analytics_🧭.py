@@ -15,5 +15,9 @@ st.sidebar.markdown("# Prescriptive Analytics 🧭")
 
 
 ############################ MAIN BODY
+# load the dataset
+file_name = './assets/ObesityDataSet_cleaned.csv'
+df = pd.read_csv(file_name)
+
 
 """ # Prescriptive Analytics 🧭"""

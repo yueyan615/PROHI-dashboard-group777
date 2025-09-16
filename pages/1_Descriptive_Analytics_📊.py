@@ -1,4 +1,7 @@
 import streamlit as st
+import plotly.figure_factory as ff
+import pandas as pd
+import numpy as np
 
 st.set_page_config(
     # page_title="Obesity Dashboard",
@@ -26,22 +29,21 @@ Add here some descriptive analytics with Widgets and Plots
 """
 
 
-import plotly.figure_factory as ff
-import pandas as pd
-import numpy as np
+
 ########################### 1
 
 ### Create a CSV viewer
 """## 1. Obesity Dataset (cleaned)"""
 
-DATA_URL = "https://archive.ics.uci.edu/dataset/544/estimation+of+obesity+levels+based+on+eating+habits+and+physical+condition"
-
-# display the url
-st.caption(DATA_URL) 
-
 # load the dataset
 file_name = './assets/ObesityDataSet_cleaned.csv'
 df = pd.read_csv(file_name)
+
+
+# display the url
+DATA_URL = "https://archive.ics.uci.edu/dataset/544/estimation+of+obesity+levels+based+on+eating+habits+and+physical+condition"
+st.caption(DATA_URL) 
+
 
 # display the dataframe
 st.dataframe(df, use_container_width=True)
