@@ -1,25 +1,25 @@
 import streamlit as st
 
 st.set_page_config(
-    # page_title="Obesity Dashboard",
+    page_title="Welcome 👋",
     page_icon="logo1.png",
 )
 
 
+############################ SIDEBAR
 ### Logo
-img1 = 'logo_nb.png'
+img1 = './img/logo_nb.png'
 st.logo(img1, size= "large", icon_image=None)  
-#######################################
+
+st.sidebar.markdown("# Welcome 👋")
 
 
-
-### Main body
+############################ MAIN BODY
 # img_body = st.image("logo2.png", use_container_width = True )
 """
-# Welcome to ObesityVision!
+# Welcome to ObesityVision 👋
 """
 
 # st.code("x = 2021")
 
-#######################################
 

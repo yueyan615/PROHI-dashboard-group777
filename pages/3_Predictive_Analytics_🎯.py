@@ -6,7 +6,16 @@ st.set_page_config(
     page_icon="logo1.png",
 )
 
+############################ SIDEBAR
+### Logo
+img1 = './img/logo_nb.png'
+st.logo(img1, size= "large", icon_image=None)  
 
+st.sidebar.markdown("# Predictive Analytics 🎯")
+
+
+############################ MAIN BODY
+""" # Predictive Analytics 🎯"""
 
 
 # st.markdown("# Predictive Analytics 🎯")
@@ -46,14 +55,6 @@ st.set_page_config(
 # # 
 # ⚠️ Add some visualizations to help understanding what the predictions mean...
 # """
-
-
-
-
-### Logo
-img1 = 'logo_nb.png'
-st.logo(img1, size= "large", icon_image=None)  
-#######################################
 
 
 gender = st.radio(

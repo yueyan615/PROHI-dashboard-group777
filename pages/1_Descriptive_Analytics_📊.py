@@ -6,17 +6,16 @@ st.set_page_config(
 )
 
 
+############################ SIDEBAR
 ### Logo
-img1 = 'logo_nb.png'
+img1 = './img/logo_nb.png'
 st.logo(img1, size= "large", icon_image=None)  
-#######################################
+
+st.sidebar.markdown("# Descriptive Analytics 📊")
 
 
-
-
-st.markdown("# Descriptive Analytics 📊")
-
-# st.sidebar.markdown("# Descriptive Analytics 📊")
+############################ MAIN BODY
+""" # Descriptive Analytics 📊"""
 
 """
 Add here some descriptive analytics with Widgets and Plots
