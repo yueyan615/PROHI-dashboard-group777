@@ -2,7 +2,7 @@ import streamlit as st
 
 st.set_page_config(
     # page_title="Obesity Dashboard",
-    page_icon="logo1.png",
+    page_icon="./img/logo1.png",
 )
 
 ############################ SIDEBAR

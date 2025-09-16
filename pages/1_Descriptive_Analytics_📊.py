@@ -2,7 +2,7 @@ import streamlit as st
 
 st.set_page_config(
     # page_title="Obesity Dashboard",
-    page_icon="logo1.png",
+    page_icon="./img/logo1.png",
 )
 
 
@@ -25,14 +25,33 @@ Add here some descriptive analytics with Widgets and Plots
 🔗 Link: <https://plotly.com/python/scientific-charts/>
 """
 
-import numpy as np
+
 import plotly.figure_factory as ff
-
-
-#########################################
-import streamlit as st
 import pandas as pd
 import numpy as np
+########################### 1
+
+### Create a CSV viewer
+"""## 1. Obesity Dataset (cleaned)"""
+
+DATA_URL = "https://archive.ics.uci.edu/dataset/544/estimation+of+obesity+levels+based+on+eating+habits+and+physical+condition"
+
+# display the url
+st.caption(DATA_URL) 
+
+# load the dataset
+file_name = './assets/ObesityDataSet_cleaned.csv'
+df = pd.read_csv(file_name)
+
+# display the dataframe
+st.dataframe(df, use_container_width=True)
+
+# display the shape of dataframe
+st.write(f"Total: **{df.shape[0]}** rows × **{df.shape[1]}** columns")
+
+
+########################### 2
+"""## 2. Random time series data"""
 
 st.write("Streamlit supports a wide range of data visualizations, including [Plotly, Altair, and Bokeh charts](https://docs.streamlit.io/develop/api-reference/charts). 📊 And with over 20 input widgets, you can easily make your data interactive!")
 
@@ -49,9 +68,10 @@ if rolling_average:
 tab1, tab2 = st.tabs(["Chart", "Dataframe"])
 tab1.line_chart(data, height=250)
 tab2.dataframe(data, height=250, use_container_width=True)
-#########################################
 
 
+########################### 3
+"""## 3. Histogram chart"""
 
 # Add histogram data
 x1 = np.random.randn(200) - 2
@@ -70,18 +90,4 @@ fig = ff.create_distplot(
 # Plot!
 st.plotly_chart(fig, use_container_width=True)
 
-"""
-Hello
-"""
-
-## Plot two
-
-import plotly.express as px
-import pandas as pd
-df = pd.DataFrame(dict(
-    r=[1, 5, 2, 2, 3],
-    theta=['processing cost','mechanical properties','chemical stability',
-           'thermal stability', 'device integration']))
-fig = px.line_polar(df, r='r', theta='theta', line_close=True)
-
-st.plotly_chart(fig, use_container_width=True)
+########################### 4

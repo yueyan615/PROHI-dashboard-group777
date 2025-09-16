@@ -4,7 +4,7 @@ import pandas as pd
 
 st.set_page_config(
     # page_title="Obesity Dashboard",
-    page_icon="logo1.png",
+    page_icon="./img/logo1.png",
 )
 
 
@@ -21,15 +21,7 @@ st.sidebar.markdown("# About ℹ️")
 """
 # About the Dataset 
 """
-# load the dataset
-file_name = './assets/ObesityDataSet_cleaned.csv'
-df = pd.read_csv(file_name)
 
-# display the dataframe
-st.dataframe(df, use_container_width=True)
-
-# display the shape of dataframe
-st.write(f"Total: **{df.shape[0]}** rows × **{df.shape[1]}** columns")
 
 """
 # About Our Team 

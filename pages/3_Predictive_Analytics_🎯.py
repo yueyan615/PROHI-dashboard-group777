@@ -3,7 +3,7 @@ import pickle
 
 st.set_page_config(
     # page_title="Obesity Dashboard",
-    page_icon="logo1.png",
+    page_icon="./img/logo1.png",
 )
 
 ############################ SIDEBAR
@@ -17,10 +17,6 @@ st.sidebar.markdown("# Predictive Analytics 🎯")
 ############################ MAIN BODY
 """ # Predictive Analytics 🎯"""
 
-
-# st.markdown("# Predictive Analytics 🎯")
-
-# st.sidebar.markdown("# Predictive Analytics 🎯")
 
 # """
 # ⚠️ Add here some predictive analytics with Widgets and Plots
@@ -56,52 +52,78 @@ st.sidebar.markdown("# Predictive Analytics 🎯")
 # ⚠️ Add some visualizations to help understanding what the predictions mean...
 # """
 
-
-gender = st.radio(
-    "Gender",
-    ("Male", "Female"),
-)
-#########################################
+##############################################################################
 
 
-age = st.number_input(
-    "Age (year)", value=None, placeholder="Type a number...", step=1, format="%d"
-)
-st.write("The current number is ", age)
+### Example of input widgets
+st.markdown("### Do some presentation here...")
+
+with st.form("my_form"):
+    # slider_val = st.slider("Form slider")
+    # checkbox_val = st.checkbox("Form checkbox")
+
+    gender = st.radio(
+    "Gender", ("Male", "Female"),
+    )
+
+    age = st.number_input(
+        "Age (year)", value=None, placeholder="Type a number...", step=1, format="%d"
+    )
+    st.write("The current number is ", age)
 
 
-height = st.number_input(
-    "Height (m)", value=None, placeholder="Type a number...", step=0.01, format="%.2f"
-)
-if height is not None:
-    st.write("The current number is %.2f" % height)
-else:
-    st.write("The current number is None")
+    height = st.number_input(
+        "Height (m)", value=None, placeholder="Type a number...", step=0.01, format="%.2f"
+    )
+    if height is not None:
+        st.write("The current number is %.2f" % height)
+    else:
+        st.write("The current number is None")
 
 
 
-weight = st.number_input(
-    "Weight (kg)", value=None, placeholder="Type a number...", step=0.5, format="%.1f"
-)
-if weight is not None:
-    st.write("The current number is %.1f" % weight)
-else:
-    st.write("The current number is None")
+    weight = st.number_input(
+        "Weight (kg)", value=None, placeholder="Type a number...", step=0.5, format="%.1f"
+    )
+    if weight is not None:
+        st.write("The current number is %.1f" % weight)
+    else:
+        st.write("The current number is None")
 
-##########################################
+    ##########################################
 
-q1 = st.selectbox(
-    "Q1",
-    ("0: xxxxxxxxxx", "1: xxxxxxxxxxxx", "2: xxxxxxxxxxxxxxx")
-)
+    q1 = st.selectbox(
+        "Q1",
+        ("0: xxxxxxxxxx", "1: xxxxxxxxxxxx", "2: xxxxxxxxxxxxxxx")
+    )
 
-q2 = st.selectbox(
-    "Q2",
-    ("0: xxxxxxxxxx", "1: xxxxxxxxxxxx", "2: xxxxxxxxxxxxxxx")
-)
+    q2 = st.selectbox(
+        "Q2",
+        ("0: xxxxxxxxxx", "1: xxxxxxxxxxxx", "2: xxxxxxxxxxxxxxx")
+    )
 
-q3 = st.selectbox(
-    "Q3",
-    ("0: xxxxxxxxxx", "1: xxxxxxxxxxxx", "2: xxxxxxxxxxxxxxx")
-)
+    q3 = st.selectbox(
+        "Q3",
+        ("0: xxxxxxxxxx", "1: xxxxxxxxxxxx", "2: xxxxxxxxxxxxxxx")
+    )
     
+
+
+
+
+    # Every form must have a submit button.
+    pred = st.form_submit_button("Predict!")
+    # if pred:
+    #     st.write("slider", slider_val, "checkbox", checkbox_val)
+
+
+
+
+
+
+
+
+
+######################################################################
+
+
