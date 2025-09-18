@@ -24,5 +24,5 @@ df = pd.read_csv(file_name)
 """ # Diagnostic Analytics"""
 
 """
-Description ...
+This section helps users explore relationships between variables. Through correlations, statistical tests, and clustering, users can investigate potential factors that explain differences in obesity levels.
 """

@@ -25,7 +25,7 @@ df = pd.read_csv(file_name)
 
 """ # Predictive Analytics"""
 """
-Description ...
+This section allows users to input new data and obtain predictions on obesity levels using a pre-trained machine learning model. The dashboard focuses on making predictions rather than training models.
 """
 
 # """

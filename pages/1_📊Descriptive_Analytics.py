@@ -24,7 +24,7 @@ st.logo(img1, size= "large", icon_image=None)
 """ # Descriptive Analytics"""
 
 """
-Description ...
+This section provides an overview of the dataset. Users can explore basic summaries, pivot tables, and simple plots to understand the distribution of variables and obesity levels.
 """
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -36,7 +36,7 @@ df = pd.read_csv(file_name)
 ########################### 1
 
 ### Create a CSV viewer
-"""## Obesity Dataset (cleaned)"""
+"""## Obesity Dataset"""
 
 # display the url
 DATA_URL = "https://archive.ics.uci.edu/dataset/544"
@@ -104,11 +104,11 @@ with tab2:
 
 
 
-st.markdown("<br>", unsafe_allow_html=True)
+
 st.markdown("<br>", unsafe_allow_html=True)
 # st.markdown("---")
 st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("<br>", unsafe_allow_html=True)
+
 
 
 ########################### 2

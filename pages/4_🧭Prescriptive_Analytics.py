@@ -24,3 +24,7 @@ df = pd.read_csv(file_name)
 
 
 """ # Prescriptive Analytics"""
+
+"""
+This section provides explanations for the model’s predictions using SHAP. Users can see which factors contribute most to obesity classification, both for individual cases and overall, and gain actionable insights.
+"""
