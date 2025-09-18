@@ -8,6 +8,7 @@ import io
 st.set_page_config(
     # page_title="Obesity Dashboard",
     page_icon="./img/logo1.png",
+    # layout="wide"
 )
 
 
@@ -77,36 +78,28 @@ with tab2:
         "Obesity_level": "Ordinal"
     }
 
-    # 构建变量信息表
+    # Generate a list of variable information
     var_info = []
     for col in df.columns:
         var_type = variable_type_map.get(col, str(df[col].dtype))
         if var_type == "Numerical":
-            mn, mx = df[col].min(), df[col].max()
-            options = [f"{mn:g} ~ {mx:g}"]          # 统一成 list[str]
+            min_val = df[col].min()
+            max_val = df[col].max()
+            options = f"{min_val:g} ~ {max_val:g}"  
         else:
             unique_vals = df[col].dropna().astype(str).unique().tolist()
-            options = unique_vals[:10] + (["..."] if len(unique_vals) > 10 else [])
+            preview = unique_vals[:10] + (["..."] if len(unique_vals) > 10 else [])
+            options = ", ".join(preview)            
         var_info.append({"Variable": col, "Type": var_type, "Options": options})
 
     var_info_df = pd.DataFrame(var_info)
-    st.dataframe(
-        var_info_df,
-        use_container_width=True,
-        column_config={
-            "Options": st.column_config.ListColumn("Options")  # 可选：更好看
-        },
+    st.dataframe(var_info_df, 
+                 use_container_width=True,
+                 column_config={
+                    "Options": st.column_config.ListColumn("Options", width=900)  
+                },
     )
-
-
-
-
-
-
-
-
-
-
+    
 
 
 
@@ -189,7 +182,7 @@ if option:
         )
         tab3, tab4 = st.tabs(["Chart", "Table"])
         with tab3:
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=False)
         with tab4:
             st.dataframe(count_df, use_container_width=True)
     
