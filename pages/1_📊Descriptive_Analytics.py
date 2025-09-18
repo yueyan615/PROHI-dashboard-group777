@@ -4,6 +4,7 @@ import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 import io
+from pandas.api import types as ptypes
 
 st.set_page_config(
     # page_title="Obesity Dashboard",
@@ -30,8 +31,8 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 
 # load the dataset
-file_name = './assets/ObesityDataSet_cleaned.csv'
-df = pd.read_csv(file_name)
+file_name = './assets/ObesityDataSet_cleaned.parquet'
+df = pd.read_parquet(file_name)
 
 ########################### 1
 
@@ -57,49 +58,53 @@ with tab1:
 with tab2:
     st.write(f"Total: **{df.shape[0]}** rows × **{df.shape[1]}** columns")
 
-    # 自定义变量类型映射（举例，可根据实际情况调整）
-    variable_type_map = {
-        "Gender": "Categorical",
-        "Age": "Numerical",
-        "Height": "Numerical",
-        "Weight": "Numerical",
-        "Family_history_overweight": "Categorical",
-        "High_caloric_food": "Categorical",
-        "Veggie_consumption_freq": "Ordinal",
-        "Main_meals_count": "Ordinal",
-        "Food_between_meals_freq": "Ordinal",
-        "Smokes": "Categorical",
-        "Water_consumption": "Ordinal",
-        "Monitors_calories": "Categorical",
-        "Physical_activity": "Ordinal",
-        "Screen_time": "Ordinal",
-        "Alcohol_consumption_freq": "Ordinal",
-        "Transportation_mode": "Categorical",
-        "Obesity_level": "Ordinal"
-    }
-
-    # Generate a list of variable information
-    var_info = []
+    # 自动生成列信息表（dtype / Variable Type / categories or numeric summary）
+    rows = []
     for col in df.columns:
-        var_type = variable_type_map.get(col, str(df[col].dtype))
-        if var_type == "Numerical":
-            min_val = df[col].min()
-            max_val = df[col].max()
-            options = f"{min_val:g} ~ {max_val:g}"  
+        s = df[col]
+        # 推断变量类型
+        if s.dtype.name == "category":
+            var_type = "Ordinal" if s.cat.ordered else "Categorical"
+            cats = list(map(str, s.cat.categories))
+            n_cats = len(cats)
+            preview = ", ".join(cats[:20] + (["..."] if n_cats > 20 else []))
+            summary = f"{n_cats} categories: {preview}"
+        elif ptypes.is_bool_dtype(s):
+            var_type = "Boolean"
+            cats = ["True", "False"]
+            summary = "Categories: True, False"
+        elif ptypes.is_numeric_dtype(s):
+            var_type = "Numerical"
+            try:
+                mn = s.min()
+                mx = s.max()
+                mean = s.mean()
+                summary = f"{mn:g} ~ {mx:g} (mean = {mean:g})"
+            except Exception:
+                summary = ""
         else:
-            unique_vals = df[col].dropna().astype(str).unique().tolist()
-            preview = unique_vals[:10] + (["..."] if len(unique_vals) > 10 else [])
-            options = ", ".join(preview)            
-        var_info.append({"Variable": col, "Type": var_type, "Options": options})
+            # 小基数的 object 当作分类处理
+            if s.nunique(dropna=True) <= 20:
+                var_type = "Categorical"
+                unique_vals = list(map(str, s.dropna().unique().tolist()))
+                n_cats = len(unique_vals)
+                preview = ", ".join(unique_vals[:20] + (["..."] if n_cats > 20 else []))
+                summary = f"{n_cats} categories: {preview}"
+            else:
+                var_type = "Other"
+                summary = ""
 
-    var_info_df = pd.DataFrame(var_info)
-    st.dataframe(var_info_df, 
-                 use_container_width=True,
-                 column_config={
-                    "Options": st.column_config.ListColumn("Options", width=900)  
-                },
-    )
-    
+        rows.append({
+            "Column": col,
+            "Variable_Type": var_type,
+            "Summary": summary
+        })
+
+    var_summary_df = pd.DataFrame(rows)
+
+    # st.subheader("Columns summary (Variable Type & Summary)")
+    st.dataframe(var_summary_df, use_container_width=True, height=600)
+
 
 
 
@@ -114,29 +119,10 @@ st.markdown("<br>", unsafe_allow_html=True)
 ########################### 2
 """## Explore Variables by Obesity Level"""
 
-# Add category data
-option_map = {
-    "Gender": "Gender",
-    "Age": "Age",
-    "Height": "Height",
-    "Weight": "Weight",
-    "Family history of obesity": "Family_history_overweight",
-    "High caloric food consumption": "High_caloric_food",
-    "Frequency of vegetable intake": "Veggie_consumption_freq",
-    "Number of primary meals": "Main_meals_count",
-    "Consumption of food": "Food_between_meals_freq",
-    "Smoking habit": "Smokes",
-    "Water consumption per day": "Water_consumption",
-    "Tracking calorie consumption": "Monitors_calories",
-    "Frequency of physical activity": "Physical_activity",
-    "Time spent on electronic gadgets": "Screen_time",
-    "Alcohol consumption": "Alcohol_consumption_freq",
-    "Type of transportation used": "Transportation_mode"
-}
 
 option = st.selectbox(
     "",
-    list(option_map.keys()),
+    list(df.columns),
     index=None,
     placeholder="Select Columns...",
 )
@@ -144,7 +130,7 @@ option = st.selectbox(
 st.markdown("<br>", unsafe_allow_html=True)
 
 if option:
-    col = option_map[option]
+    col = option
 
     # Determine the variable type
     if df[col].dtype == "bool" or df[col].nunique() <= 10:
@@ -159,6 +145,28 @@ if option:
             values='Count',
             # title=f"Overall {option} Distribution"
         )
+        
+        if getattr(df[col].dtype, "name", "") == "category":
+            categories = list(df[col].cat.categories)
+        else:
+            categories = list(df[col].dropna().unique().astype(str))
+
+        # 生成颜色映射（按 categories 顺序）
+        palette = px.colors.qualitative.Plotly
+        color_map = {str(cat): palette[i % len(palette)] for i, cat in enumerate(categories)}
+
+        # 饼图：指定 category_orders 和 color_discrete_map
+        overall_count = df[col].value_counts(dropna=False).reset_index()
+        overall_count.columns = [col, "Count"]
+        fig_overall = px.pie(
+            overall_count,
+            names=col,
+            values="Count",
+            category_orders={col: categories},
+            color_discrete_map=color_map,
+        )       
+
+
         tab1, tab2 = st.tabs(["Chart", "Table"])
         with tab1:
             st.plotly_chart(fig_overall, use_container_width=True)
@@ -168,6 +176,7 @@ if option:
         # Categorical variables: bar chart by group
         st.markdown(f"**{option} Distribution by Obesity Level**")
         count_df = df.groupby(['Obesity_level', col]).size().reset_index(name='Count')
+        count_df[col] = count_df[col].astype(str)
         fig = px.bar(
             count_df,
             x='Obesity_level',
@@ -219,10 +228,6 @@ if option:
             st.plotly_chart(fig, use_container_width=True)
         with tab4:
             st.dataframe(df[[col, 'Obesity_level']], use_container_width=True)
-
-
-
-
 
 
 

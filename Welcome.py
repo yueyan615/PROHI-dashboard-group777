@@ -3,7 +3,7 @@ import streamlit as st
 st.set_page_config(
     page_title="Welcome 👋",
     page_icon="./img/logo1.png",
-    layout="wide"
+    # layout="wide"
 )
 
 

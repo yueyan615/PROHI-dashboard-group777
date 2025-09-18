@@ -5,7 +5,7 @@ import pandas as pd
 st.set_page_config(
     # page_title="Obesity Dashboard",
     page_icon="./img/logo1.png",
-    layout="wide"
+    # layout="wide"
 )
 
 
