@@ -110,12 +110,10 @@ st.plotly_chart(fig, use_container_width=False)
 
 from scipy.stats import chi2_contingency
 
-st.markdown("## Cramér's V heatmap（仅名义变量）")
-
-# 选出名义变量（把 bool 也视为名义）
+# Select nominal variables (treat bool as nominal as well)
 nominal_cols = [c for c in df.columns if not pd.api.types.is_numeric_dtype(df[c])]
 if len(nominal_cols) < 2:
-    st.info("没有足够的名义变量来绘制热图。")
+    st.info("There are not enough nominal variables to plot a heatmap.")
 else:
     def cramers_v(x, y):
         ct = pd.crosstab(x, y)
@@ -188,13 +186,12 @@ else:
 
 
 #################################### 3
-# ...existing code...
 
-st.markdown("## 每列与 Obesity_level 的关联强度")
-
+st.markdown("## The association strength of each column with Obesity level")
+st.write("methods: Cramér's V for nominal↔nominal; eta (correlation ratio) for nominal→numeric")
 target = "Obesity_level"
 if target not in df.columns:
-    st.error(f"找不到列 {target}")
+    st.error(f"{target} not found")
 else:
     # 辅助：Cramér's V（名义-名义）
     def cramers_v(x, y):
@@ -243,7 +240,7 @@ else:
     assoc_df = pd.DataFrame(rows).sort_values("Association", ascending=False).reset_index(drop=True)
 
     # 显示表格（前 50）
-    st.subheader("按与 Obesity_level 关联强度排序（0-1）")
+    st.subheader("Sorted by the strength of association with Obesity_level (0-1)")
     st.dataframe(assoc_df, use_container_width=True)
 
     # 绘图：条形图
