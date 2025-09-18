@@ -12,6 +12,10 @@ st.set_page_config(
     # layout="wide"
 )
 
+# load the dataset
+file_name = './assets/ObesityDataSet_cleaned.parquet'
+df = pd.read_parquet(file_name)
+
 
 ############################ SIDEBAR
 ### Logo
@@ -30,14 +34,10 @@ This section provides an overview of the dataset. Users can explore basic summar
 st.markdown("<br>", unsafe_allow_html=True)
 
 
-# load the dataset
-file_name = './assets/ObesityDataSet_cleaned.parquet'
-df = pd.read_parquet(file_name)
 
 ########################### 1
-
-### Create a CSV viewer
 """## Obesity Dataset"""
+
 
 # display the url
 DATA_URL = "https://archive.ics.uci.edu/dataset/544"
@@ -45,11 +45,6 @@ st.caption(f"🔗 {DATA_URL}" )
 
 
 # display the dataframe
-# st.dataframe(df, use_container_width=True)
-
-# display the dataframe
-
-
 tab1, tab2 = st.tabs(["Dataframe(cleaned)", "Detials"])
 with tab1:
     st.dataframe(df, use_container_width=True)
@@ -58,41 +53,30 @@ with tab1:
 with tab2:
     st.write(f"Total: **{df.shape[0]}** rows × **{df.shape[1]}** columns")
 
-    # 自动生成列信息表（dtype / Variable Type / categories or numeric summary）
     rows = []
     for col in df.columns:
         s = df[col]
-        # 推断变量类型
+
         if s.dtype.name == "category":
             var_type = "Ordinal" if s.cat.ordered else "Categorical"
             cats = list(map(str, s.cat.categories))
-            n_cats = len(cats)
-            preview = ", ".join(cats[:20] + (["..."] if n_cats > 20 else []))
-            summary = f"{n_cats} categories: {preview}"
+            preview = ", ".join(cats[:20] + (["..."] if len(cats) > 20 else []))
+            summary = preview
+
         elif ptypes.is_bool_dtype(s):
             var_type = "Boolean"
-            cats = ["True", "False"]
-            summary = "Categories: True, False"
+            summary = "Yes, No"
+
         elif ptypes.is_numeric_dtype(s):
             var_type = "Numerical"
             try:
                 mn = s.min()
                 mx = s.max()
-                mean = s.mean()
-                summary = f"{mn:g} ~ {mx:g} (mean = {mean:g})"
+                summary = f"{mn:g} ~ {mx:g}"
             except Exception:
                 summary = ""
-        else:
-            # 小基数的 object 当作分类处理
-            if s.nunique(dropna=True) <= 20:
-                var_type = "Categorical"
-                unique_vals = list(map(str, s.dropna().unique().tolist()))
-                n_cats = len(unique_vals)
-                preview = ", ".join(unique_vals[:20] + (["..."] if n_cats > 20 else []))
-                summary = f"{n_cats} categories: {preview}"
-            else:
-                var_type = "Other"
-                summary = ""
+
+
 
         rows.append({
             "Column": col,
@@ -102,9 +86,8 @@ with tab2:
 
     var_summary_df = pd.DataFrame(rows)
 
-    # st.subheader("Columns summary (Variable Type & Summary)")
+    st.subheader("Columns summary")
     st.dataframe(var_summary_df, use_container_width=True, height=600)
-
 
 
 
@@ -119,13 +102,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 ########################### 2
 """## Explore Variables by Obesity Level"""
 
-
-option = st.selectbox(
-    "",
-    list(df.columns),
-    index=None,
-    placeholder="Select Columns...",
-)
+option = st.selectbox("**Features to Explore**", list(df.columns), index=0)
 
 st.markdown("<br>", unsafe_allow_html=True)
 

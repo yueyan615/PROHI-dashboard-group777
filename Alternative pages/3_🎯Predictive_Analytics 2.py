@@ -9,6 +9,10 @@ st.set_page_config(
     # layout="wide"
 )
 
+# load the dataset
+file_name = './assets/ObesityDataSet_cleaned.parquet'
+df = pd.read_parquet(file_name)
+
 ############################ SIDEBAR
 ### Logo
 img1 = './img/logo_nb.png'
@@ -18,15 +22,16 @@ st.logo(img1, size= "large", icon_image=None)
 
 
 ############################ MAIN BODY
-# load the dataset
-file_name = './assets/ObesityDataSet_cleaned.csv'
-df = pd.read_csv(file_name)
-
-
 """ # Predictive Analytics"""
 """
 This section allows users to input new data and obtain predictions on obesity levels using a pre-trained machine learning model. The dashboard focuses on making predictions rather than training models.
 """
+st.markdown("<br>", unsafe_allow_html=True)
+
+
+
+########################### 1
+"""## Input Your Data Here"""
 
 # """
 # ⚠️ Add here some predictive analytics with Widgets and Plots
@@ -66,7 +71,7 @@ This section allows users to input new data and obtain predictions on obesity le
 
 
 ### Example of input widgets
-st.markdown("### Do some presentation here...")
+
 
 
 gender = st.radio(
