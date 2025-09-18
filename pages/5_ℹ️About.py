@@ -21,10 +21,15 @@ st.logo(img1, size= "large", icon_image=None)
 """
 # About the Dataset 
 """
-
+"""
+Description ...
+"""
 
 """
 # About Our Team 
+"""
+"""
+Description ...
 """
 
 # st.code("x = 2021")

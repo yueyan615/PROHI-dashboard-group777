@@ -22,4 +22,4 @@ file_name = './assets/ObesityDataSet_cleaned.csv'
 df = pd.read_csv(file_name)
 
 
-""" # Prescriptive Analytics 🧭"""
+""" # Prescriptive Analytics"""

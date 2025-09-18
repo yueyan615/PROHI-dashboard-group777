@@ -20,4 +20,8 @@ st.logo(img1, size= "large", icon_image=None)
 file_name = './assets/ObesityDataSet_cleaned.csv'
 df = pd.read_csv(file_name)
 
-""" # Diagnostic Analytics 🩺"""
+""" # Diagnostic Analytics"""
+
+"""
+Description ...
+"""

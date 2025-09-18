@@ -17,7 +17,10 @@ st.logo(img1, size= "large", icon_image=None)
 ############################ MAIN BODY
 # img_body = st.image("logo2.png", use_container_width = True )
 """
-# Welcome to ObesityVision 👋
+# Welcome to ObesityVision
+"""
+"""
+Description ...
 """
 
 # st.code("x = 2021")
