@@ -1,9 +1,9 @@
 import streamlit as st
-import plotly.figure_factory as ff
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
+import io
 
 st.set_page_config(
     # page_title="Obesity Dashboard",
@@ -43,55 +43,80 @@ st.caption(f"🔗 {DATA_URL}" )
 
 
 # display the dataframe
-st.dataframe(df, use_container_width=True)
+# st.dataframe(df, use_container_width=True)
 
-# display the shape of dataframe
-st.write(f"Total: **{df.shape[0]}** rows × **{df.shape[1]}** columns")
+# display the dataframe
+
+
+tab1, tab2 = st.tabs(["Dataframe(cleaned)", "Detials"])
+with tab1:
+    st.dataframe(df, use_container_width=True)
+# ...existing code...
+
+with tab2:
+    st.write(f"Total: **{df.shape[0]}** rows × **{df.shape[1]}** columns")
+
+    # 自定义变量类型映射（举例，可根据实际情况调整）
+    variable_type_map = {
+        "Gender": "Categorical",
+        "Age": "Numerical",
+        "Height": "Numerical",
+        "Weight": "Numerical",
+        "Family_history_overweight": "Categorical",
+        "High_caloric_food": "Categorical",
+        "Veggie_consumption_freq": "Ordinal",
+        "Main_meals_count": "Ordinal",
+        "Food_between_meals_freq": "Ordinal",
+        "Smokes": "Categorical",
+        "Water_consumption": "Ordinal",
+        "Monitors_calories": "Categorical",
+        "Physical_activity": "Ordinal",
+        "Screen_time": "Ordinal",
+        "Alcohol_consumption_freq": "Ordinal",
+        "Transportation_mode": "Categorical",
+        "Obesity_level": "Ordinal"
+    }
+
+    # 构建变量信息表
+    var_info = []
+    for col in df.columns:
+        var_type = variable_type_map.get(col, str(df[col].dtype))
+        if var_type == "Numerical":
+            mn, mx = df[col].min(), df[col].max()
+            options = [f"{mn:g} ~ {mx:g}"]          # 统一成 list[str]
+        else:
+            unique_vals = df[col].dropna().astype(str).unique().tolist()
+            options = unique_vals[:10] + (["..."] if len(unique_vals) > 10 else [])
+        var_info.append({"Variable": col, "Type": var_type, "Options": options})
+
+    var_info_df = pd.DataFrame(var_info)
+    st.dataframe(
+        var_info_df,
+        use_container_width=True,
+        column_config={
+            "Options": st.column_config.ListColumn("Options")  # 可选：更好看
+        },
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
 # st.markdown("---")
 st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
-# ########################### 2
-# """## 2. Random time series data"""
 
-# st.write("Streamlit supports a wide range of data visualizations, including [Plotly, Altair, and Bokeh charts](https://docs.streamlit.io/develop/api-reference/charts). 📊 And with over 20 input widgets, you can easily make your data interactive!")
-
-# all_users = ["Alice", "Bob", "Charly"]
-# with st.container(border=True):
-#     users = st.multiselect("Users", all_users, default=all_users)
-#     rolling_average = st.toggle("Rolling average")
-
-# np.random.seed(42)
-# data = pd.DataFrame(np.random.randn(20, len(users)), columns=users)
-# if rolling_average:
-#     data = data.rolling(7).mean().dropna()
-
-# tab1, tab2 = st.tabs(["Chart", "Dataframe"])
-# tab1.line_chart(data, height=250)
-# tab2.dataframe(data, height=250, use_container_width=True)
-
-
-# ########################### 3
-# """## 3. Histogram chart"""
-
-# # Add histogram data
-# x1 = np.random.randn(200) - 2
-# x2 = np.random.randn(200)
-# x3 = np.random.randn(200) + 2
-
-# # Group data together
-# hist_data = [x1, x2, x3]
-
-# group_labels = ['Group 1', 'Group 2', 'Group 3']
-
-# # Create distplot with custom bin_size
-# fig = ff.create_distplot(
-#         hist_data, group_labels, bin_size=[.1, .25, .5])
-
-# # Plot!
-# st.plotly_chart(fig, use_container_width=True)
 
 ########################### 2
 """## Explore Variables by Obesity Level"""
