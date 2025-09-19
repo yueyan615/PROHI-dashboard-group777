@@ -76,9 +76,9 @@ fig.update_traces(textfont={"size": 10})
 
 # 放大画布并调整边距，增加整体字体（坐标轴/标题）
 fig.update_layout(
-    width=1200,
-    height=1000,
-    margin=dict(l=150, r=50, t=80, b=150),
+    width=900,
+    height=700,
+    # margin=dict(l=150, r=0, t=80, b=50),
     title=dict(font=dict(size=20)),
     font=dict(size=12)
 )
@@ -98,12 +98,15 @@ fig.update_coloraxes(
         title=dict(text=""),      # 去掉 colorbar 的标题
         y=0.5,
         yanchor="middle",
+        x=0.7,          # 调小到 0.92 更靠近热图
+        xanchor="left",
+        xpad=0.2
     ),
     cmin=-1,
     cmax=1
 )
 # 在 Streamlit 中保持自定义宽高（use_container_width=False）
-st.plotly_chart(fig, use_container_width=False)
+st.plotly_chart(fig, use_container_width=True)
 
 ########################### 2
 # ...existing code...

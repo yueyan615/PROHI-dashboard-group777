@@ -146,7 +146,11 @@ if option:
 
         tab1, tab2 = st.tabs(["Chart", "Table"])
         with tab1:
-            st.plotly_chart(fig_overall, use_container_width=True)
+            fig_overall.update_layout(height=400)
+            c1, c2, c3 = st.columns([1, 4, 1])
+            with c2:
+                st.plotly_chart(fig_overall, use_container_width=True)
+
         with tab2:
             st.dataframe(overall_count, use_container_width=True)
 
@@ -168,11 +172,12 @@ if option:
         )
         tab3, tab4 = st.tabs(["Chart", "Table"])
         with tab3:
-            st.plotly_chart(fig, use_container_width=False)
+            fig.update_layout(height=340, width=800)
+            c1, c2, c3 = st.columns([1, 4, 1])
+            with c2:
+                st.plotly_chart(fig, use_container_width=True)
         with tab4:
             st.dataframe(count_df, use_container_width=True)
-    
-
     else:
         # Continuous variable: Overall distribution
         st.markdown(f"**Overall {option} Distribution**")
@@ -183,8 +188,13 @@ if option:
             # title=f"Overall {option} Distribution"
         )
         tab1, tab2 = st.tabs(["Chart", "Table"])
-        with tab1:
-            st.plotly_chart(fig_overall, use_container_width=True)
+        with tab1:           
+            fig_overall.update_layout(height=340, width=800)
+            c1, c2, c3 = st.columns([1, 3, 1])
+            with c2:
+                st.plotly_chart(fig_overall, use_container_width=True)
+
+
         with tab2:
             st.dataframe(df[[col]], use_container_width=True)
 
@@ -202,7 +212,11 @@ if option:
         )
         tab3, tab4 = st.tabs(["Chart", "Table"])
         with tab3:
-            st.plotly_chart(fig, use_container_width=True)
+            fig.update_layout(height=340, width=800)
+            c1, c2, c3 = st.columns([1, 3, 1])
+            with c2:
+                st.plotly_chart(fig, use_container_width=True)
+
         with tab4:
             st.dataframe(df[[col, 'Obesity_level']], use_container_width=True)
 
