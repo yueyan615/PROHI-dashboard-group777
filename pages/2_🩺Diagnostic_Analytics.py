@@ -10,7 +10,7 @@ st.set_page_config(
 )
 
 # load the dataset
-file_name = './assets/ObesityDataSet_cleaned.parquet'
+file_name = './assets/ObesityDataSet_BMI.parquet'
 df = pd.read_parquet(file_name)
 
 ############################ SIDEBAR
@@ -78,7 +78,7 @@ fig.update_traces(textfont={"size": 10})
 fig.update_layout(
     width=900,
     height=700,
-    # margin=dict(l=150, r=0, t=80, b=50),
+    margin=dict(l=50, r=50, t=80, b=50),
     title=dict(font=dict(size=20)),
     font=dict(size=12)
 )
@@ -95,10 +95,10 @@ fig.update_coloraxes(
         len=1.0,                  # 占满热图高度
         tickvals=[-1, 0, 1],
         ticktext=["-1", "0", "1"],
-        title=dict(text=""),      # 去掉 colorbar 的标题
+        title=dict(text=""),     # 不显示标题
         y=0.5,
         yanchor="middle",
-        x=0.7,          # 调小到 0.92 更靠近热图
+        x=0.88,          
         xanchor="left",
         xpad=0.2
     ),
@@ -106,7 +106,8 @@ fig.update_coloraxes(
     cmax=1
 )
 # 在 Streamlit 中保持自定义宽高（use_container_width=False）
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, use_container_width=False)
+
 
 ########################### 2
 # ...existing code...
@@ -190,83 +191,83 @@ else:
 
 #################################### 3
 
-st.markdown("## The association strength of each column with Obesity level")
-st.write("methods: Cramér's V for nominal↔nominal; eta (correlation ratio) for nominal→numeric")
-target = "Obesity_level"
-if target not in df.columns:
-    st.error(f"{target} not found")
-else:
-    # 辅助：Cramér's V（名义-名义）
-    def cramers_v(x, y):
-        ct = pd.crosstab(x.fillna("##NA##"), y.fillna("##NA##"))
-        if ct.size == 0:
-            return 0.0
-        chi2 = chi2_contingency(ct, correction=False)[0]
-        n = ct.to_numpy().sum()
-        r, k = ct.shape
-        denom = n * (min(r - 1, k - 1))
-        return float(0.0 if denom == 0 else np.sqrt(chi2 / denom))
+# st.markdown("## The association strength of each column with Obesity level")
+# st.write("methods: Cramér's V for nominal↔nominal; eta (correlation ratio) for nominal→numeric")
+# target = "Obesity_level"
+# if target not in df.columns:
+#     st.error(f"{target} not found")
+# else:
+#     # 辅助：Cramér's V（名义-名义）
+#     def cramers_v(x, y):
+#         ct = pd.crosstab(x.fillna("##NA##"), y.fillna("##NA##"))
+#         if ct.size == 0:
+#             return 0.0
+#         chi2 = chi2_contingency(ct, correction=False)[0]
+#         n = ct.to_numpy().sum()
+#         r, k = ct.shape
+#         denom = n * (min(r - 1, k - 1))
+#         return float(0.0 if denom == 0 else np.sqrt(chi2 / denom))
 
-    # 辅助：correlation ratio / eta（名义目标 - 数值特征）
-    def correlation_ratio(categories, measurements):
-        cat = np.asarray(categories)
-        meas = np.asarray(measurements, dtype=float)
-        mask = ~pd.isnull(cat) & ~pd.isnull(meas)
-        if mask.sum() == 0:
-            return 0.0
-        cat = cat[mask]
-        meas = meas[mask]
-        groups = {}
-        for c, m in zip(cat, meas):
-            groups.setdefault(c, []).append(m)
-        grand_mean = meas.mean()
-        ss_between = sum(len(v) * (np.mean(v) - grand_mean) ** 2 for v in groups.values())
-        ss_total = ((meas - grand_mean) ** 2).sum()
-        return float(0.0 if ss_total == 0 else ss_between / ss_total)
+#     # 辅助：correlation ratio / eta（名义目标 - 数值特征）
+#     def correlation_ratio(categories, measurements):
+#         cat = np.asarray(categories)
+#         meas = np.asarray(measurements, dtype=float)
+#         mask = ~pd.isnull(cat) & ~pd.isnull(meas)
+#         if mask.sum() == 0:
+#             return 0.0
+#         cat = cat[mask]
+#         meas = meas[mask]
+#         groups = {}
+#         for c, m in zip(cat, meas):
+#             groups.setdefault(c, []).append(m)
+#         grand_mean = meas.mean()
+#         ss_between = sum(len(v) * (np.mean(v) - grand_mean) ** 2 for v in groups.values())
+#         ss_total = ((meas - grand_mean) ** 2).sum()
+#         return float(0.0 if ss_total == 0 else ss_between / ss_total)
 
-    rows = []
-    for col in df.columns:
-        if col == target:
-            continue
-        s = df[col]
-        # 将布尔视为名义
-        if pd.api.types.is_numeric_dtype(s):
-            # 数值特征：用 correlation ratio（Obesity_level 为分组）
-            val = correlation_ratio(df[target].astype(str), s)
-            method = "eta (nominal→numeric)"
-        else:
-            # 名义特征（包括 bool/object/category）：用 Cramér's V
-            val = cramers_v(df[col].astype(str), df[target].astype(str))
-            method = "Cramér's V (nominal↔nominal)"
-        rows.append({"Feature": col, "Association": float(val), "Method": method})
+#     rows = []
+#     for col in df.columns:
+#         if col == target:
+#             continue
+#         s = df[col]
+#         # 将布尔视为名义
+#         if pd.api.types.is_numeric_dtype(s):
+#             # 数值特征：用 correlation ratio（Obesity_level 为分组）
+#             val = correlation_ratio(df[target].astype(str), s)
+#             method = "eta (nominal→numeric)"
+#         else:
+#             # 名义特征（包括 bool/object/category）：用 Cramér's V
+#             val = cramers_v(df[col].astype(str), df[target].astype(str))
+#             method = "Cramér's V (nominal↔nominal)"
+#         rows.append({"Feature": col, "Association": float(val), "Method": method})
 
-    assoc_df = pd.DataFrame(rows).sort_values("Association", ascending=False).reset_index(drop=True)
+#     assoc_df = pd.DataFrame(rows).sort_values("Association", ascending=False).reset_index(drop=True)
 
-    # 显示表格（前 50）
-    st.subheader("Sorted by the strength of association with Obesity_level (0-1)")
-    st.dataframe(assoc_df, use_container_width=True)
+#     # 显示表格（前 50）
+#     st.subheader("Sorted by the strength of association with Obesity_level (0-1)")
+#     st.dataframe(assoc_df, use_container_width=True)
 
-    # 绘图：条形图
-    fig_assoc = px.bar(
-        assoc_df,
-        x="Association",
-        y="Feature",
-        orientation="h",
-        color="Method",
-        color_discrete_map={
-            "Cramér's V (nominal↔nominal)": "#46cdcf",
-            "eta (nominal→numeric)": "#cf4846"
-        },
-        hover_data={"Association": ":.3f"},
-        title="Feature vs Obesity_level — Association strength",
-        text=assoc_df["Association"].map(lambda v: f"{v:.2f}")
-    )
-    fig_assoc.update_layout(
-        height= max(400, 40 * len(assoc_df)), 
-        margin=dict(l=300, r=50, t=60, b=50),
-        yaxis=dict(autorange="reversed"),
-        showlegend=True
-    )
-    fig_assoc.update_traces(textposition="outside", textfont=dict(size=11))
-    st.plotly_chart(fig_assoc, use_container_width=False)
+#     # 绘图：条形图
+#     fig_assoc = px.bar(
+#         assoc_df,
+#         x="Association",
+#         y="Feature",
+#         orientation="h",
+#         color="Method",
+#         color_discrete_map={
+#             "Cramér's V (nominal↔nominal)": "#46cdcf",
+#             "eta (nominal→numeric)": "#cf4846"
+#         },
+#         hover_data={"Association": ":.3f"},
+#         title="Feature vs Obesity_level — Association strength",
+#         text=assoc_df["Association"].map(lambda v: f"{v:.2f}")
+#     )
+#     fig_assoc.update_layout(
+#         height= max(400, 40 * len(assoc_df)), 
+#         margin=dict(l=300, r=50, t=60, b=50),
+#         yaxis=dict(autorange="reversed"),
+#         showlegend=True
+#     )
+#     fig_assoc.update_traces(textposition="outside", textfont=dict(size=11))
+#     st.plotly_chart(fig_assoc, use_container_width=False)
 

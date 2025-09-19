@@ -13,21 +13,9 @@ st.set_page_config(
 )
 
 # ---------------------- 读数据 ----------------------
-# 优先读 parquet；若不存在则尝试 CSV（包括 /mnt/data 的备份）
-parquet_path = './assets/ObesityDataSet_cleaned.parquet'
-csv_candidates = [
-    './assets/ObesityDataSet_cleaned.csv',
-    '/mnt/data/ObesityDataSet_cleaned.csv',  # 你上传的文件常见路径
-]
+parquet_path = './assets/ObesityDataSet_BMI.parquet'
+df =  pd.read_parquet(parquet_path)
 
-df = None
-if os.path.exists(parquet_path):
-    df = pd.read_parquet(parquet_path)
-else:
-    for p in csv_candidates:
-        if os.path.exists(p):
-            df = pd.read_csv(p)
-            break
 
 if df is None:
     st.error("未找到数据文件。请确认存在以下任一路径：\n"
@@ -36,16 +24,13 @@ if df is None:
 
 # ---------------------- 侧边栏（Logo） ----------------------
 img1 = './img/logo_nb.png'
-try:
-    # 新版 Streamlit 提供 st.logo；若你的版本不支持可改为 st.sidebar.image
-    st.logo(img1, size="large", icon_image=None)
-except Exception:
-    st.sidebar.image(img1, use_container_width=True)
+st.logo(img1, size="large", icon_image=None)
+
 
 # ---------------------- 主体标题与说明 ----------------------
 st.markdown("# Diagnostic Analytics")
 st.markdown("""
-本节用于探索变量之间的关系。通过相关性热图，帮助你初步识别可能与肥胖水平有关的特征间联动。
+This section is used to explore the relationships between variables. Through the correlation heatmap, it helps you initially identify the linkages between features that may be related to obesity levels.
 """)
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -53,12 +38,12 @@ st.markdown("<br>", unsafe_allow_html=True)
 col1, col2 = st.columns([1, 1])
 with col1:
     method = st.selectbox("**Correlation method**", ["pearson", "spearman", "kendall"], index=0,
-                          help="Pearson 适合线性关系；Spearman 更鲁棒；Kendall 最稳但更慢。")
+                          help="Pearson is suitable for linear relationships; Spearman is more robust; Kendall is the most stable but slower.")
 with col2:
     scope = st.selectbox("**Columns to include**",
                          ["numeric only", "one-hot (all)"],
                          index=0,
-                         help="numeric only：仅数值列；one-hot (all)：对非数值列做独热，再与数值列一起计算相关。")
+                         help="numeric only: only numeric columns; one-hot (all): perform one-hot encoding on non-numeric columns and compute correlations with numeric columns.")
 
 # ---------------------- 构造用于相关性的矩阵 ----------------------
 if scope == "numeric only":
@@ -69,7 +54,7 @@ else:
     mat = pd.get_dummies(df, drop_first=False)
 
 if mat.shape[1] < 2:
-    st.warning("可用于计算相关性的列不足 2 个。请检查数据或更换“Columns to include”的选择。")
+    st.warning("There are fewer than 2 columns available for calculating correlation. Please check the data or change the selection in 'Columns to include'.")
     st.stop()
 
 # 大矩阵时，关闭格子内数字以避免重叠

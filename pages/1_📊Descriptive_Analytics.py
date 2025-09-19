@@ -81,7 +81,7 @@ with tab2:
         rows.append({
             "Column": col,
             "Variable_Type": var_type,
-            "Summary": summary
+            "Range / Categories": summary
         })
 
     var_summary_df = pd.DataFrame(rows)
@@ -154,30 +154,31 @@ if option:
         with tab2:
             st.dataframe(overall_count, use_container_width=True)
 
+        if col != 'Obesity_level':
         # Categorical variables: bar chart by group
-        st.markdown(f"**{option} Distribution by Obesity Level**")
-        count_df = df.groupby(['Obesity_level', col]).size().reset_index(name='Count')
-        count_df[col] = count_df[col].astype(str)
-        fig = px.bar(
-            count_df,
-            x='Obesity_level',
-            y='Count',
-            color=col,
-            barmode='group',
-            category_orders={'Obesity_level': [
-                'Insufficient_Weight', 'Normal_Weight', 'Overweight_Level_I',
-                'Overweight_Level_II', 'Obesity_Type_I', 'Obesity_Type_II', 'Obesity_Type_III'
-            ]},
-            # title=f"{option} Distribution by Obesity Level"
-        )
-        tab3, tab4 = st.tabs(["Chart", "Table"])
-        with tab3:
-            fig.update_layout(height=340, width=800)
-            c1, c2, c3 = st.columns([1, 4, 1])
-            with c2:
-                st.plotly_chart(fig, use_container_width=True)
-        with tab4:
-            st.dataframe(count_df, use_container_width=True)
+            st.markdown(f"**{option} Distribution by Obesity Level**")
+            count_df = df.groupby(['Obesity_level', col]).size().reset_index(name='Count')
+            count_df[col] = count_df[col].astype(str)
+            fig = px.bar(
+                count_df,
+                x='Obesity_level',
+                y='Count',
+                color=col,
+                barmode='group',
+                category_orders={'Obesity_level': [
+                    'Insufficient_Weight', 'Normal_Weight', 'Overweight_Level_I',
+                    'Overweight_Level_II', 'Obesity_Type_I', 'Obesity_Type_II', 'Obesity_Type_III'
+                ]},
+                # title=f"{option} Distribution by Obesity Level"
+            )
+            tab3, tab4 = st.tabs(["Chart", "Table"])
+            with tab3:
+                fig.update_layout(height=340, width=800)
+                c1, c2, c3 = st.columns([1, 4, 1])
+                with c2:
+                    st.plotly_chart(fig, use_container_width=True)
+            with tab4:
+                st.dataframe(count_df, use_container_width=True)
     else:
         # Continuous variable: Overall distribution
         st.markdown(f"**Overall {option} Distribution**")
