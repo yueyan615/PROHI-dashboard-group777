@@ -9,7 +9,7 @@ from pandas.api import types as ptypes
 st.set_page_config(
     # page_title="Obesity Dashboard",
     page_icon="./img/logo1.png",
-    # layout="wide"
+    layout="wide"
 )
 
 # load the dataset
@@ -41,7 +41,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 # display the url
 DATA_URL = "https://archive.ics.uci.edu/dataset/544"
-st.caption(f"🔗 {DATA_URL}" ) 
+st.caption(f"🔗 [Data Source](https://archive.ics.uci.edu/dataset/544/estimation+of+obesity+levels+based+on+eating+habits+and+physical+condition)" ) 
 
 
 # display the dataframe
@@ -100,9 +100,9 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 
 ########################### 2
-"""## Explore Variables by Obesity Level"""
+"""## Feature Distributions"""
 
-option = st.selectbox("**Features to Explore**", list(df.columns), index=0)
+option = st.selectbox("**Select a feature to display**", list(df.columns), index=0)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
