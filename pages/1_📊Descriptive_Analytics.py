@@ -154,7 +154,7 @@ if option:
         with tab2:
             st.dataframe(overall_count, use_container_width=True)
 
-        if col != 'Obesity_level':
+        if col != 'Obesity_level' and col != 'BMI':
         # Categorical variables: bar chart by group
             st.markdown(f"**{option} Distribution by Obesity Level**")
             count_df = df.groupby(['Obesity_level', col]).size().reset_index(name='Count')
