@@ -102,6 +102,8 @@ st.markdown("<br>", unsafe_allow_html=True)
 ########################### 2
 """## Feature Distributions"""
 
+
+
 option = st.selectbox("**Select a feature to display**", list(df.columns), index=0)
 
 st.markdown("<br>", unsafe_allow_html=True)
@@ -171,6 +173,8 @@ if option:
                 ]},
                 # title=f"{option} Distribution by Obesity Level"
             )
+            fig.update_layout(legend_title_text="")
+            
             tab3, tab4 = st.tabs(["Chart", "Table"])
             with tab3:
                 fig.update_layout(height=340, width=800)
