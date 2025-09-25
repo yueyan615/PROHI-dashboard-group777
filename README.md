@@ -50,10 +50,14 @@ If you are using Mac, you may need to follow install Xcode. Check the official S
 To run the dashboard execute the following command:
 
 ``` bash
-> streamlit run Dashboard.py
+> streamlit run Welcome.py
 # If the command above fails, use:
-> python -m streamlit run Welcome.py
-```
+> 1. Create the environment with `python -m venv env`
+  2. Activate the virtual environment for Python
+    - `source env/bin/activate` [in Linux/Mac]
+    - `.\env\Scripts\activate.bat` [in Windows command prompt]
+    - `.\env\Scripts\Activate.ps1` [in Windows PowerShell]
+  3. Make sure that your terminal is in the environment (`env`) not in the global Python installation
 
 ### Creating pre-trained models for the web dashboadr
 
