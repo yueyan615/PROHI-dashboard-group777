@@ -52,7 +52,7 @@ To run the dashboard execute the following command:
 ``` bash
 > streamlit run Dashboard.py
 # If the command above fails, use:
-> python -m streamlit run Dashboard.py
+> python -m streamlit run Welcome.py
 ```
 
 ### Creating pre-trained models for the web dashboadr
