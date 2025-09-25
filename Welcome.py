@@ -9,7 +9,7 @@ st.set_page_config(
 
 ############################ SIDEBAR
 ### Logo
-img1 = './img/logo_nb.png'
+img1 = './img/logo.svg'
 st.logo(img1, size= "large", icon_image=None)  
 
 # st.sidebar.markdown("# Welcome 👋")
