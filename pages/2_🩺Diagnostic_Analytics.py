@@ -4,7 +4,7 @@ import numpy as np
 import plotly.express as px
 
 st.set_page_config(
-    # page_title="Obesity Dashboard",
+    page_title="Diagnostic | Obesity Analytics",
     page_icon="./img/logo1.png",
     layout="wide"
 )
@@ -18,7 +18,8 @@ df = pd.read_parquet(file_name)
 img1 = './img/logo.svg'
 st.logo(img1, size= "large", icon_image=None)  
 
-# st.sidebar.markdown("# Diagnostic Analytics 🩺")
+st.sidebar.caption(f"© 2025 Group 777 | Project Management and Tools for Health Informatics (PROHI)")
+
 
 
 ############################ MAIN BODY

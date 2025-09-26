@@ -7,7 +7,7 @@ import io
 from pandas.api import types as ptypes
 
 st.set_page_config(
-    # page_title="Obesity Dashboard",
+    page_title="Descriptive | Obesity Analytics",
     page_icon="./img/logo1.png",
     layout="wide"
 )
@@ -56,7 +56,8 @@ def categorical_setup(series: pd.Series):
 img1 = './img/logo.svg'
 st.logo(img1, size= "large", icon_image=None)  
 
-# st.sidebar.markdown("# Descriptive Analytics 📊")
+st.sidebar.caption(f"© 2025 Group 777 | Project Management and Tools for Health Informatics (PROHI)")
+
 
 
 ############################ MAIN BODY

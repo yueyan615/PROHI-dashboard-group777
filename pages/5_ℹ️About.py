@@ -2,9 +2,9 @@ import pandas as pd
 import streamlit as st
 
 st.set_page_config(
-    # page_title="Obesity Dashboard",
+    page_title="About | Obesity Analytics",
     page_icon="./img/logo1.png",
-    # layout="wide"
+    layout="wide"
 )
 
 
@@ -13,7 +13,8 @@ st.set_page_config(
 img1 = './img/logo.svg'
 st.logo(img1, size= "large", icon_image=None)  
 
-# st.sidebar.markdown("# About ℹ️")
+st.sidebar.caption(f"© 2025 Group 777 | Project Management and Tools for Health Informatics (PROHI)")
+
 
 
 ############################ MAIN BODY
@@ -52,7 +53,7 @@ Naznin Akhtar
 # st.code("x = 2021")
 import streamlit as st
 
-st.set_page_config(page_title="About | Obesity Analytics", page_icon="ℹ️", layout="wide")
+# st.set_page_config(page_title="About | Obesity Analytics", page_icon="ℹ️", layout="wide")
 st.title("About")
 
 st.markdown("""
