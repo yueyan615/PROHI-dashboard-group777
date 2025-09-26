@@ -21,8 +21,11 @@ with center:
 
 # Intro (one-liner)
 st.markdown(
+    "<div style='text-align:center'>"
     "An interactive web dashboard to explore obesity-related data, understand key drivers, "
     "predict outcomes with a pre-trained model, and explain model decisions."
+    "</div>",
+    unsafe_allow_html=True
 )
 
 st.divider()
@@ -51,7 +54,7 @@ c3, c4 = st.columns(2, gap="large")
 with c3:
     st.markdown("### 🎯 Predictive")
     st.markdown(
-        "Generate obesity-level estimates for new cases using a pre-trained model (loaded from file) with confidence scores."
+        "Generate obesity-level estimates for new cases using a pre-trained model with confidence scores."
     )
 with c4:
     st.markdown("### 🧭 Prescriptive")
@@ -62,4 +65,4 @@ with c4:
 st.divider()
 
 # Footer in main body (keep minimal here; full footer sits in sidebar)
-st.caption("See About for more data details.")
+st.caption("See ℹ️About for more data details.")

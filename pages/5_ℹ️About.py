@@ -1,4 +1,3 @@
-import pandas as pd
 import streamlit as st
 
 st.set_page_config(
@@ -7,88 +6,79 @@ st.set_page_config(
     layout="wide"
 )
 
-
 ############################ SIDEBAR
-### Logo
-img1 = './img/logo.svg'
-st.logo(img1, size= "large", icon_image=None)  
+st.logo("./img/logo.svg", size="large")
 
-st.sidebar.caption(f"© 2025 Group 777 | Project Management and Tools for Health Informatics (PROHI)")
-
-
+with st.sidebar:
+    st.caption(f"© 2025 Group 777 · Project Management and Tools for Health Informatics (PROHI)")
 
 ############################ MAIN BODY
-# img_body = st.image("logo2.png", use_container_width = True )
-"""
-# About the Dataset 
-"""
-
-st.markdown("""
-This dashboard uses data from the [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/544/estimation+of+obesity+levels+based+on+eating+habits+and+physical+condition).
-
-**Dataset name:** *Estimation of Obesity Levels Based on Eating Habits and Physical Condition*  
-
-**Description:**  
-The dataset contains information collected from individuals regarding their **eating habits**, **physical condition**, and **lifestyle behaviors**.  
-It was designed to predict obesity levels, classified into categories such as *Underweight, Normal Weight, Overweight, and Obese* based on WHO standards.  
-""")
-
-"""
-# About Our Team
-"""
-st.markdown("""
-This dashboard was created by **Group 777** as part of assignemtn of Project Management and Tools for Health Informatics (PROHI).
-The team members are:
-Weiqi Kong 
-
-Yueyan Li 
-
-Zsolt Fehér 
-
-Christoffer Brändefors 
-
-Naznin Akhtar
-""")
-
-# st.code("x = 2021")
-import streamlit as st
-
-# st.set_page_config(page_title="About | Obesity Analytics", page_icon="ℹ️", layout="wide")
 st.title("About")
 
-st.markdown("""
-## Project Overview
-This dashboard walks through **Descriptive → Diagnostic → Predictive → Prescriptive (Explainability)** analytics for an obesity classification problem.
-Training happens in Jupyter; the Streamlit app only performs **inference and SHAP explanations** using a pre-trained model file.
+# ===== Problem Description =====
+st.markdown(
+    "This project explores how lifestyle and physical-condition factors relate to obesity level categories and how a simple, "
+    "explainable tool can help non-specialists interpret results. The goal is an interactive web dashboard that communicates "
+    "insights clearly, supports classroom use, and offers responsible, non-clinical guidance."
+)
 
-## Dataset
-- **Source**: Public obesity dataset on eating habits and physical condition  
-- **Size**: ~2,100 rows; ~17 columns (features + multi-class label)  
-- **Regions**: Latin America (e.g., Mexico/Peru/Colombia)  
-- **Imbalance Handling**: Oversampling (e.g., SMOTE) used to address class imbalance  
-- **Features**: Diet, activity, hydration, alcohol, screen time, transport, plus sex/age/height/weight  
-- **Limitations**: Contains synthetic samples; labels often based on BMI thresholds—interpretation is exploratory
+st.divider()
 
-## Dashboard Structure & Methods
-- **Descriptive**: Summaries, distributions, pivots, and basic visuals with filters/bins  
-- **Diagnostic**: Correlations, pair plots, group comparisons, and optional clustering  
-- **Predictive**: Loads a **pre-trained** `.pkl` model for on-demand predictions (no training in the app)  
-- **Prescriptive (SHAP)**: Single/batch SHAP with summary/force/waterfall plots and concise textual insights
+# ===== Dataset =====
+st.markdown("## Dataset")
+st.markdown(
+    'We use the UCI dataset ["Estimation of Obesity Levels Based on Eating Habits and Physical Condition"]'
+    "(https://archive.ics.uci.edu/dataset/544/estimation+of+obesity+levels+based+on+eating+habits+and+physical+condition). "
+    "The original resource records lifestyle and physical-condition factors with the goal of classifying obesity levels. "
+    "To address class imbalance, the dataset is widely distributed in a SMOTE-balanced form using Weka; 77% of the final records are synthetic. "
+    "A side effect of this SMOTE pipeline is that some categorical fields end up stored as floating-point values instead of integer codes.\n\n"
+    "For this dashboard, we load a cleaned, rounded dataset derived from that SMOTE-balanced form. During preprocessing we rounded and cast categorical variables "
+    "to integer codes so category options are integers and better reflect their real-world meaning. Insights are intended for educational and exploratory use."
+)
 
-## Team & Contact
-- **Team**: Group 7 (replace if needed)  
-- **Members**: *Add names here*  
-- **Contact**: *Add shared or lead email here* (e.g., group7-project@university.edu)  
-- **Project Docs**: See the team charter for problem statement, design process, risks, and milestones
-
-## Timeline & Scope
-- Semester project milestones: proposal → requirements → beta dashboard → final delivery  
-- **Boundaries**: Educational use; no clinical validation or EHR integrations; predictions are not guaranteed; SHAP aids understanding but does not replace expert judgment
-
-## References (examples)
-- Public dataset record/paper describing variables and oversampling approach  
-- Recent studies on obesity classification (including ensemble baselines)  
-- Team project charter and internal documentation
-""")
+with st.expander("UCI dataset details"):
+    st.markdown(
+        "- **Size**: 2,111 records; 17 attributes (16 features + 1 target)\n"
+        "- **Collection and preprocessing**: initial web survey of 485 responses (ages 14–61) over ~30 days; preprocessing included removal of missing/atypical data and normalization\n"
+        "- **Regions**: Mexico, Peru, Colombia (Latin America)\n"
+        "- **Label (target)**: seven-class obesity level — Insufficient Weight, Normal Weight, Overweight I, Overweight II, Obesity I, Obesity II, Obesity III; labels derived from BMI using thresholds aligned with WHO and Mexican Normativity\n"
+        "  - Underweight < 18.5; Normal 18.5–24.9; Overweight 25.0–29.9; Obesity I 30.0–34.9; Obesity II 35.0–39.9; Obesity III ≥ 40\n"
+        "- **Features (examples)**: high-calorie food frequency (FAVC), vegetables frequency (FCVC), number of main meals (NCP), snacking (CAEC), daily water intake (CH2O), alcohol consumption (CALC), calorie monitoring (SCC), physical activity (FAF), screen time (TUE), transport mode (MTRANS), plus gender, age, height, weight\n"
+        "- **Imbalance handling**: SMOTE (Weka) used to address class imbalance; ~77% of the final 2,111 records are synthetic"
+    )
 
 
+st.divider()
+
+# ===== Team & Contact =====
+st.markdown("## Team & Contact")
+st.markdown(
+    "This dashboard was created by Group 777 as part of the assignment for Project Management and Tools for Health Informatics (PROHI).\n\n"
+    "Team members:\n"
+    "- Weiqi Kong\n"
+    "- Yueyan Li\n"
+    "- Zsolt Fehér\n"
+    "- Christoffer Brändefors\n"
+    "- Naznin Akhtar\n\n"
+    "Contact:\n"
+    "- Email: group777@su.se\n"
+    "- Address: Stockholm University, SE-106 91 Stockholm, Sweden"
+)
+
+st.divider()
+
+# ===== References =====
+st.markdown("## References")
+st.markdown(
+    "[1] Palechor FM, Manotas AH. Dataset for estimation of obesity levels based on eating habits and physical condition in individuals from Colombia, Peru and Mexico. "
+    "Data Brief. 2019;25:104344. DOI: 10.1016/j.dib.2019.104344.\n\n"
+    "[2] UCI Machine Learning Repository. Estimation of Obesity Levels Based on Eating Habits and Physical Condition [Internet]. 2019. "
+    "Available from: https://archive.ics.uci.edu/dataset/544/estimation+of+obesity+levels+based+on+eating+habits+and+physical+condition\n\n"
+    "[3] World Health Organization. Obesity and overweight. [Internet]. 2021. "
+    "Available from: https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight\n\n"
+    "[4] Solomon DD, Khan S, Garg S, Gupta G, Almjally A, Alabduallah BI, et al. Hybrid Majority Voting: Prediction and Classification Model for Obesity. "
+    "Diagnostics (Basel). 2023;13(15). DOI: 10.3390/diagnostics13152610."
+)
+
+# st.divider()
+# st.caption("Scope: educational and exploratory use; not medical advice.")
