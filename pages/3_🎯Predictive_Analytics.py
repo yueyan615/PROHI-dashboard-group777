@@ -84,25 +84,38 @@ with st.form("my_form"):
     )
 
     age = st.number_input(
-        "Age (year)", value=None, placeholder="Type a number...", step=1, format="%d"
+        "Age (year)",
+        placeholder="Type a number...",
+        value=None,
+        # min_value=14,
+        # max_value=61,
+        format="%g"   # Do not force a fixed number of decimal places; display according to the actual significant digits.
     )
+    
     st.write("The current number is ", age)
 
 
     height = st.number_input(
-        "Height (m)", value=None, placeholder="Type a number...", step=0.01, format="%.2f"
+        "Height (m)",
+        value=None,
+        placeholder="Type a number...",
+        format="%g"   # Do not force a fixed number of decimal places; display according to the actual significant digits.
     )
     if height is not None:
-        st.write("The current number is %.2f" % height)
+        st.write("The current number is ", height)
     else:
         st.write("The current number is None")
 
 
+
     weight = st.number_input(
-        "Weight (kg)", value=None, placeholder="Type a number...", step=0.5, format="%.1f"
+        "Weight (kg)",
+        value=None,
+        placeholder="Type a number...",
+        format="%g"   # Do not force a fixed number of decimal places; display according to the actual significant digits.
     )
     if weight is not None:
-        st.write("The current number is %.1f" % weight)
+        st.write("The current number is ", weight)
     else:
         st.write("The current number is None")
 
