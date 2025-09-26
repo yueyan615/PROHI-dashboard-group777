@@ -199,6 +199,7 @@ if option:
                 },
                 color_discrete_map=color_map,
             )
+            fig.update_layout(legend_title_text="")
             tab3, tab4 = st.tabs(["Chart", "Table"])
             with tab3:
                 fig.update_layout(height=340, width=800)
