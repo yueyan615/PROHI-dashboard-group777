@@ -55,9 +55,9 @@ for col in df.columns:
 corr = enc.corr(method=method)
 
 custom_scale = [
-    (0.0, "#cf4846"),   # 对应 zmin (-1)
+    (0.0, "#0072b2"),   # 对应 zmin (-1)
     (0.5, "#ffffff"),   # 对应 0
-    (1.0, "#46cdcf"),   # 对应 zmax (1)
+    (1.0, "#e69f00"),   # 对应 zmax (1)
 ]
 
 fig = px.imshow(

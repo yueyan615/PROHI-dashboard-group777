@@ -18,7 +18,7 @@ df = pd.read_parquet(file_name)
 
 
 # ====== Color palette & helpers ======
-PALETTE = ["#82dce3","#82abe3","#82e3b9","#dce382","#e3b982","#e38982","#e382ab","#b982e3"]
+PALETTE = ["#0072b2","#e69f00","#009e73","#cc79a7","#f0e442","#d55e00","#56b4e9"]
 
 OBESITY_ORDER = [
     'Insufficient_Weight','Normal_Weight','Overweight_Level_I',
