@@ -1,65 +1,66 @@
 import streamlit as st
+import datetime as dt
 
 st.set_page_config(
     page_title="Welcome 👋",
     page_icon="./img/logo1.png",
-    # layout="wide"
+    layout="wide"
 )
-
 
 ############################ SIDEBAR
-### Logo
-img1 = './img/logo.svg'
-st.logo(img1, size= "large", icon_image=None)  
+# Brand
+# If your Streamlit version supports st.logo (>=1.31). Otherwise, remove it.
+st.logo("./img/logo.svg", size="large")
 
-img_body = st.sidebar.image("./img/logo_6.svg", use_container_width = False )
-st.sidebar.caption("© 2025 Group 777 | Project Management and Tools for Health Informatics (PROHI)")
-
+st.sidebar.image("./img/logo_6.svg", use_container_width=False)
+st.sidebar.divider()
+year = dt.date.today().year
+st.sidebar.caption(f"© {year} Group 777 · Project Management and Tools for Health Informatics (PROHI)")
 
 ############################ MAIN BODY
+st.title("Welcome to ObesityVision")
 
-"""
-# Welcome to ObesityVision
-"""
 # Intro (one-liner)
 st.markdown(
-    "A concise, teaching-focused **web dashboard** for exploring obesity-related data, "
-    "understanding drivers, predicting outcomes with a pre-trained model, and explaining model decisions."
+    "An interactive web dashboard to explore obesity-related data, understand key drivers, "
+    "predict outcomes with a pre-trained model, and explain model decisions."
 )
 
 st.divider()
 
-# Four purposes — concise and outcome-oriented
-col1, col2 = st.columns(2)
+# Lead-in
+st.markdown("## What you can do here")
+st.markdown(
+    "Four outcome-oriented modules that take you from exploring the data to explaining decisions—clearly and responsibly."
+)
 
-with col1:
+# Row 1
+c1, c2 = st.columns(2, gap="large")
+with c1:
     st.markdown("### 📊 Descriptive")
     st.markdown(
-        "Understand the **baseline profile** of the dataset — who/what/how much — and surface key **patterns** at a glance."
+        "Understand the baseline profile of the dataset — who/what/how much — and surface key patterns at a glance."
     )
-
-with col2:
+with c2:
     st.markdown("### 🩺 Diagnostic")
     st.markdown(
-        "Reveal **relationships and likely drivers** behind differences across groups to inform **why** outcomes vary."
+        "Reveal relationships and likely drivers behind differences across groups to inform why outcomes vary."
     )
 
-with col1:
+# Row 2
+c3, c4 = st.columns(2, gap="large")
+with c3:
     st.markdown("### 🎯 Predictive")
     st.markdown(
-        "Generate **obesity-level estimates** for new cases using a **pre-trained model** (loaded from file) with confidence scores."
+        "Generate obesity-level estimates for new cases using a pre-trained model (loaded from file) with confidence scores."
     )
-
-with col2:
-    st.markdown("### 🧩 Prescriptive (SHAP)")
+with c4:
+    st.markdown("### 🧭 Prescriptive")
     st.markdown(
-        "Explain **which features drive each prediction** and in what direction, supporting **actionable interpretation**."
+        "Use SHAP to show which features drive each prediction and in what direction—for actionable interpretation."
     )
 
 st.divider()
 
-# Compact data + disclaimer
-st.markdown(
-    "**Data note:** ~2,100 rows, ~17 features; class imbalance addressed via oversampling (e.g., SMOTE).  \n"
-    "**Disclaimer:** Educational use only — not medical advice."
-)
+# Footer in main body (keep minimal here; full footer sits in sidebar)
+st.caption("See About for more data details.")
