@@ -1,5 +1,4 @@
 import streamlit as st
-import datetime as dt
 
 st.set_page_config(
     page_title="Welcome 👋",
@@ -12,13 +11,13 @@ st.set_page_config(
 # If your Streamlit version supports st.logo (>=1.31). Otherwise, remove it.
 st.logo("./img/logo.svg", size="large")
 
-st.sidebar.image("./img/logo_6.svg", use_container_width=False)
-st.sidebar.divider()
-year = dt.date.today().year
-st.sidebar.caption(f"© {year} Group 777 · Project Management and Tools for Health Informatics (PROHI)")
+st.sidebar.caption(f"© 2025 Group 777 | Project Management and Tools for Health Informatics (PROHI)")
 
 ############################ MAIN BODY
-st.title("Welcome to ObesityVision")
+# Big Logo
+left, center, right = st.columns([1, 2, 1])
+with center:
+    st.image("./img/logo_6.svg", use_container_width=True)
 
 # Intro (one-liner)
 st.markdown(
