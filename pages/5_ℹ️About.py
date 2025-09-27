@@ -17,9 +17,7 @@ st.title("About")
 
 # ===== Problem Description =====
 st.markdown(
-    "This project explores how lifestyle and physical-condition factors relate to obesity level categories and how a simple, "
-    "explainable tool can help non-specialists interpret results. The goal is an interactive web dashboard that communicates "
-    "insights clearly, supports classroom use, and offers responsible, non-clinical guidance."
+    "Obesity-Vision is a Streamlit dashboard built on the UCI obesity dataset. It integrates descriptive, diagnostic, predictive, and SHAP-based prescriptive analytics to turn lifestyle and physical-condition data into clear insights on obesity risk. The dashboard serves the public (health literacy), healthcare providers (consultation visuals), and public-health organizations (outreach), offering engaging, responsible, non-clinical guidance that supports prevention."
 )
 
 st.divider()
