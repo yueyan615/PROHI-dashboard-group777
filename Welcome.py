@@ -11,11 +11,9 @@ st.set_page_config(
 # If your Streamlit version supports st.logo (>=1.31). Otherwise, remove it.
 st.logo("./img/logo.svg", size="large")
 
-st.sidebar.caption(f"© 2025 Group 777 | Project Management and Tools for Health Informatics (PROHI)")
-
 ############################ MAIN BODY
 # Big Logo
-left, center, right = st.columns([1, 1, 1])
+left, center, right = st.columns([3, 2, 3])
 with center:
     st.image("./img/logo_6.svg", use_container_width=True)
 
@@ -66,3 +64,4 @@ st.divider()
 
 # Footer in main body (keep minimal here; full footer sits in sidebar)
 st.caption("See ℹ️About for more data details.")
+st.caption("© 2025 Group 777 | Project Management and Tools for Health Informatics (PROHI)")

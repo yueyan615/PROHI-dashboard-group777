@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 import io
 from pandas.api import types as ptypes
+import streamlit.components.v1 as components
 
 st.set_page_config(
     page_title="Descriptive | Obesity Analytics",
@@ -56,8 +57,27 @@ def categorical_setup(series: pd.Series):
 img1 = './img/logo.svg'
 st.logo(img1, size= "large", icon_image=None)  
 
-st.sidebar.caption(f"© 2025 Group 777 | Project Management and Tools for Health Informatics (PROHI)")
 
+
+st.sidebar.write("<br>", unsafe_allow_html=True)
+
+def scroll_to(element_id: str):
+    components.html(
+        f"""
+        <script>
+        const t = window.parent.document.getElementById("{element_id}");
+        if (t) t.scrollIntoView({{behavior: "smooth", block: "start"}});
+        </script>
+        """,
+        height=0,
+    )
+
+with st.sidebar:
+    sec = st.radio("On this page", ["Obesity Dataset", "Feature Distributions"], index=0)
+    mapping = {"Obesity Dataset": "Obesity Dataset", "Feature Distributions": "Feature Distributions"}
+    scroll_to(mapping[sec])
+
+# st.sidebar.divider()
 
 
 ############################ MAIN BODY
@@ -71,10 +91,9 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 
 ########################### 1
+st.markdown('<div id="Obesity Dataset"></div>', unsafe_allow_html=True)
 """## Obesity Dataset"""
 
-
-# display the url
 
 
 # display the dataframe
@@ -133,6 +152,8 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 
 ########################### 2
+st.markdown('<div id="Feature Distributions"></div>', unsafe_allow_html=True)
+
 """## Feature Distributions"""
 
 
