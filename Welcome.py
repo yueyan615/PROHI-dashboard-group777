@@ -20,8 +20,7 @@ with center:
 # Intro (one-liner)
 st.markdown(
     "<div style='text-align:center'>"
-    "An interactive web dashboard to explore obesity-related data, understand key drivers, "
-    "predict outcomes with a pre-trained model, and explain model decisions."
+    "An interactive dashboard to explore obesity data, identify key drivers, predict outcomes with a pre-trained model, and explain the predictions."
     "</div>",
     unsafe_allow_html=True
 )
