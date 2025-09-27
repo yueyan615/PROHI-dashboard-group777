@@ -75,8 +75,6 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 
 # display the url
-DATA_URL = "https://archive.ics.uci.edu/dataset/544"
-st.caption(f"🔗 [Data Source](https://archive.ics.uci.edu/dataset/544/estimation+of+obesity+levels+based+on+eating+habits+and+physical+condition)" ) 
 
 
 # display the dataframe

@@ -15,7 +15,7 @@ st.sidebar.caption(f"© 2025 Group 777 | Project Management and Tools for Health
 
 ############################ MAIN BODY
 # Big Logo
-left, center, right = st.columns([1, 2, 1])
+left, center, right = st.columns([1, 1, 1])
 with center:
     st.image("./img/logo_6.svg", use_container_width=True)
 
@@ -39,12 +39,12 @@ st.markdown(
 # Row 1
 c1, c2 = st.columns(2, gap="large")
 with c1:
-    st.markdown("### 📊 Descriptive")
+    st.markdown("### 📊 Descriptive Analytics")
     st.markdown(
         "Understand the baseline profile of the dataset — who/what/how much — and surface key patterns at a glance."
     )
 with c2:
-    st.markdown("### 🩺 Diagnostic")
+    st.markdown("### 🩺 Diagnostic Analytics")
     st.markdown(
         "Reveal relationships and likely drivers behind differences across groups to inform why outcomes vary."
     )
@@ -52,12 +52,12 @@ with c2:
 # Row 2
 c3, c4 = st.columns(2, gap="large")
 with c3:
-    st.markdown("### 🎯 Predictive")
+    st.markdown("### 🎯 Predictive Analytics")
     st.markdown(
         "Generate obesity-level estimates for new cases using a pre-trained model with confidence scores."
     )
 with c4:
-    st.markdown("### 🧭 Prescriptive")
+    st.markdown("### 🧭 Prescriptive Analytics")
     st.markdown(
         "Use SHAP to show which features drive each prediction and in what direction—for actionable interpretation."
     )
