@@ -9,8 +9,8 @@ st.set_page_config(
 ############################ SIDEBAR
 st.logo("./img/logo.svg", size="large")
 
-with st.sidebar:
-    st.caption(f"© 2025 Group 777 · Project Management and Tools for Health Informatics (PROHI)")
+# with st.sidebar:
+    # st.caption(f"© 2025 Group 777 · Project Management and Tools for Health Informatics (PROHI)")
 
 ############################ MAIN BODY
 st.title("About")

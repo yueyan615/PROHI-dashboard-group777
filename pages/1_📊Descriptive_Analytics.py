@@ -58,7 +58,6 @@ img1 = './img/logo.svg'
 st.logo(img1, size= "large", icon_image=None)  
 
 
-
 st.sidebar.write("<br>", unsafe_allow_html=True)
 
 def scroll_to(element_id: str):
@@ -93,17 +92,20 @@ st.markdown("<br>", unsafe_allow_html=True)
 ########################### 1
 st.markdown('<div id="Obesity Dataset"></div>', unsafe_allow_html=True)
 """## Obesity Dataset"""
-
-
+"""
+This dataset has been cleaned and rounded where appropriate; floats in categorical variables have been converted to integers, and, to improve readability, both the column names and the category labels have been renamed.
+"""
 
 # display the dataframe
+TABLE_H = 400
+
 tab1, tab2 = st.tabs(["Dataframe(cleaned)", "Detials"])
 with tab1:
-    st.dataframe(df, use_container_width=True)
-# ...existing code...
+    st.dataframe(df, use_container_width=True, height=TABLE_H)
+    st.write(f"Total: **{df.shape[0]}** rows × **{df.shape[1]}** columns")
 
 with tab2:
-    st.write(f"Total: **{df.shape[0]}** rows × **{df.shape[1]}** columns")
+    
 
     rows = []
     for col in df.columns:
@@ -138,16 +140,15 @@ with tab2:
 
     var_summary_df = pd.DataFrame(rows)
 
-    st.subheader("Columns summary")
-    st.dataframe(var_summary_df, use_container_width=True, height=600)
-
-
-
+    # st.subheader("Columns summary")
+    st.dataframe(var_summary_df, use_container_width=True, height=TABLE_H)
 
 
 st.markdown("<br>", unsafe_allow_html=True)
-# st.markdown("---")
+st.divider()
 st.markdown("<br>", unsafe_allow_html=True)
+
+
 
 
 
@@ -190,10 +191,10 @@ if option:
 
         tab1, tab2 = st.tabs(["Chart", "Table"])
         with tab1:
-            fig_overall.update_layout(height=400)
+            fig_overall.update_layout(height=TABLE_H)
             c1, c2, c3 = st.columns([1, 4, 1])
             with c2:
-                st.plotly_chart(fig_overall, use_container_width=True)
+                st.plotly_chart(fig_overall, use_container_width=True, height=TABLE_H)
         with tab2:
             st.dataframe(overall_count, use_container_width=True)
 
@@ -223,7 +224,7 @@ if option:
             tab3, tab4 = st.tabs(["Chart", "Table"])
             with tab3:
                 fig.update_layout(height=340, width=800)
-                c1, c2, c3 = st.columns([1, 4, 1])
+                c1, c2, c3 = st.columns([1, 6, 1])
                 with c2:
                     st.plotly_chart(fig, use_container_width=True)
             with tab4:
@@ -271,7 +272,7 @@ if option:
         tab3, tab4 = st.tabs(["Chart", "Table"])
         with tab3:
             fig.update_layout(height=340, width=800)
-            c1, c2, c3 = st.columns([1, 3, 1])
+            c1, c2, c3 = st.columns([1, 6, 1])
             with c2:
                 st.plotly_chart(fig, use_container_width=True)
 

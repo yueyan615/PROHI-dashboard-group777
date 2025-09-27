@@ -18,7 +18,7 @@ df = pd.read_parquet(file_name)
 img1 = './img/logo.svg'
 st.logo(img1, size= "large", icon_image=None)  
 
-st.sidebar.caption(f"© 2025 Group 777 | Project Management and Tools for Health Informatics (PROHI)")
+# st.sidebar.caption("© 2025 Group 777 | Project Management and Tools for Health Informatics (PROHI)")
 
 
 
