@@ -71,8 +71,8 @@ def scroll_to(element_id: str):
     )
 
 with st.sidebar:
-    sec = st.radio("On this page", ["Obesity Dataset", "Feature Distributions"], index=0)
-    mapping = {"Obesity Dataset": "Obesity Dataset", "Feature Distributions": "Feature Distributions"}
+    sec = st.radio("On this page", ["Obesity Dataset", "Variable Distributions"], index=0)
+    mapping = {"Obesity Dataset": "Obesity Dataset", "Variable Distributions": "Variable Distributions"}
     scroll_to(mapping[sec])
 
 
@@ -146,12 +146,12 @@ st.divider()
 
 
 ########################### 2
-st.markdown('<div id="Feature Distributions"></div>', unsafe_allow_html=True)
+st.markdown('<div id="Variable Distributions"></div>', unsafe_allow_html=True)
 
-st.markdown("## Feature Distributions")
-st.markdown("This section lets you inspect individual features: view overall distributions and compare distributions across obesity levels using interactive charts and tables.")
+st.markdown("## Variable Distributions")
+st.markdown("This section lets you inspect individual variables: view overall distributions and compare distributions across obesity levels using interactive charts and tables.")
 
-option = st.selectbox("**Select a feature to display**", list(df.columns), index=0)
+option = st.selectbox("**Select a variable to display**", list(df.columns), index=0)
 TABLE_H2 = 340
 if option:
     col = option
