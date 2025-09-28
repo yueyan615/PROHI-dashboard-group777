@@ -178,14 +178,20 @@ if option:
             color_discrete_map=color_map,
         )
 
-        tab1, tab2 = st.tabs(["Chart", "Table"])
+        tab1, tab2 = st.tabs(["Chart", "Category Counts"])
         with tab1:
             fig_overall.update_layout(height=TABLE_H2)
             c1, c2, c3 = st.columns([1, 4, 1])
             with c2:
                 st.plotly_chart(fig_overall, use_container_width=True)
         with tab2:
+
+            total = overall_count["Count"].sum()
+            # overall_count["Pct"] = (overall_count["Count"] / total * 100).round(1).astype(str) + "%"
+
             st.dataframe(overall_count, use_container_width=True, height=TABLE_H2)
+
+
 
         # 分组图（除 'Obesity_level' 与 'BMI' 外）
         if col != 'Obesity_level' and col != 'BMI':
@@ -210,14 +216,15 @@ if option:
                 color_discrete_map=color_map,
             )
             fig.update_layout(legend_title_text="")
-            tab3, tab4 = st.tabs(["Chart", "Table"])
+            tab3, tab4 = st.tabs(["Chart", "Category Counts"])
             with tab3:
                 fig.update_layout(height=TABLE_H2)
                 c1, c2, c3 = st.columns([1, 6, 1])
                 with c2:
                     st.plotly_chart(fig, use_container_width=True)
             with tab4:
-                st.dataframe(count_df, use_container_width=True, height=TABLE_H2)
+                ctab = pd.crosstab(df["Obesity_level"].astype(str), plot_s).reindex(index=OBESITY_ORDER, columns=categories).fillna(0).astype(int)
+                st.dataframe(ctab, use_container_width=True, height=TABLE_H2)
 
 
     else:
@@ -231,7 +238,7 @@ if option:
         # 直方图：柱体颜色统一
         fig_overall.update_traces(marker_color=PALETTE[0], opacity=0.8)  # 或 marker=dict(color=PALETTE[0])
 
-        tab1, tab2 = st.tabs(["Chart", "Table"])
+        tab1, tab2 = st.tabs(["Chart", "Details"])
         with tab1:
             fig_overall.update_layout(height=TABLE_H2, width=800)
             c1, c2, c3 = st.columns([1, 3, 1])
@@ -239,8 +246,8 @@ if option:
                 st.plotly_chart(fig_overall, use_container_width=True)
 
         with tab2:
-            st.dataframe(df[[col]], use_container_width=True, height=TABLE_H2)
-
+            summary_df = df[[col]].describe()
+            st.dataframe(summary_df, use_container_width=True, height=TABLE_H2)
         # 箱线图（按肥胖等级分组）：所有箱体同色
         st.markdown(f"**{option} Distribution by Obesity Level**")
         fig = px.box(
@@ -252,13 +259,13 @@ if option:
         # 箱线图：线条/填充/离群点统一
         fig.update_traces(
             line_color=PALETTE[0],      # 箱体线条颜色
-            fillcolor=PALETTE[0],       # 箱体填充颜色
+            # fillcolor=PALETTE[0],       # 箱体填充颜色
             marker_color=PALETTE[0],    # 离群点颜色
-            opacity=0.8,                # 适度半透明，便于重叠观察
+            # opacity=0.8,                # 适度半透明，便于重叠观察
             selector=dict(type='box')
         )
 
-        tab3, tab4 = st.tabs(["Chart", "Table"])
+        tab3, tab4 = st.tabs(["Chart", "Details"])
         with tab3:
             fig.update_layout(height=TABLE_H2, width=800)
             c1, c2, c3 = st.columns([1, 6, 1])
@@ -266,8 +273,8 @@ if option:
                 st.plotly_chart(fig, use_container_width=True)
 
         with tab4:
-            st.dataframe(df[[col, 'Obesity_level']], use_container_width=True, height=TABLE_H2)
-
+            summary_by_group = df.groupby('Obesity_level')[col].describe().T.reindex(columns=OBESITY_ORDER)
+            st.dataframe(summary_by_group, use_container_width=True, height=TABLE_H2)
 
 
 
