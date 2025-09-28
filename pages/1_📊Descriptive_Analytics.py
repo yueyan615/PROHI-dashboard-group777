@@ -83,7 +83,6 @@ with st.sidebar:
 """
 This section provides an overview of the dataset. Users can explore basic summaries, pivot tables, and simple plots to understand the distribution of variables and obesity levels.
 """
-st.markdown("<br>", unsafe_allow_html=True)
 
 
 
@@ -189,8 +188,6 @@ if option:
         with tab2:
 
             total = overall_count["Count"].sum()
-            # overall_count["Pct"] = (overall_count["Count"] / total * 100).round(1).astype(str) + "%"
-
             st.dataframe(overall_count, use_container_width=True, height=TABLE_H2)
 
 

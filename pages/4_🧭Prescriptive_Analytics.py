@@ -27,7 +27,6 @@ st.logo(img1, size= "large", icon_image=None)
 """
 This section provides explanations for the model’s predictions using SHAP. Users can see which factors contribute most to obesity classification, both for individual cases and overall, and gain actionable insights.
 """
-st.markdown("<br>", unsafe_allow_html=True)
 
 
 

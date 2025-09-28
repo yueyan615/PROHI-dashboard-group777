@@ -45,7 +45,6 @@ with st.sidebar:
 """
 This section helps users explore relationships between variables. Through correlations, statistical tests, and clustering, users can investigate potential factors that explain differences in obesity levels.
 """
-st.markdown("<br>", unsafe_allow_html=True)
 
 
 

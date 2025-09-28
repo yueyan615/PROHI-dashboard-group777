@@ -28,7 +28,6 @@ st.logo(img1, size= "large", icon_image=None)
 """
 This section allows users to input new data and obtain predictions on obesity levels using a pre-trained machine learning model. The dashboard focuses on making predictions rather than training models.
 """
-st.markdown("<br>", unsafe_allow_html=True)
 
 
 
