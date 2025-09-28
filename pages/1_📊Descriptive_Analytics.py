@@ -59,7 +59,6 @@ st.logo(img1, size= "large", icon_image=None)
 
 
 st.sidebar.write("<br>", unsafe_allow_html=True)
-
 def scroll_to(element_id: str):
     components.html(
         f"""
@@ -76,7 +75,6 @@ with st.sidebar:
     mapping = {"Obesity Dataset": "Obesity Dataset", "Feature Distributions": "Feature Distributions"}
     scroll_to(mapping[sec])
 
-# st.sidebar.divider()
 
 
 ############################ MAIN BODY
@@ -97,7 +95,7 @@ This dataset has been cleaned and rounded where appropriate; floats in categoric
 """
 
 # display the dataframe
-TABLE_H = 240
+TABLE_H = 300
 
 tab1, tab2 = st.tabs(["Dataframe(cleaned)", "Detials"])
 with tab1:
