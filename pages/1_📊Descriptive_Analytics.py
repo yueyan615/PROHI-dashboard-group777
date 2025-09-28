@@ -71,13 +71,14 @@ def scroll_to(element_id: str):
     )
 
 with st.sidebar:
-    sec = st.radio("On this page", ["Obesity Dataset", "Variable Distributions"], index=0)
-    mapping = {"Obesity Dataset": "Obesity Dataset", "Variable Distributions": "Variable Distributions"}
+    sec = st.radio("Navigate on the page", ["Descriptive Analytics","Obesity Dataset", "Variable Distributions"], index=0)
+    mapping = {"Descriptive Analytics": "Descriptive Analytics", "Obesity Dataset": "Obesity Dataset", "Variable Distributions": "Variable Distributions"}
     scroll_to(mapping[sec])
 
 
 
 ############################ MAIN BODY
+st.markdown('<div id="Descriptive Analytics"></div>', unsafe_allow_html=True)
 """ # Descriptive Analytics"""
 
 """
