@@ -28,7 +28,7 @@ st.markdown(
 st.divider()
 
 # Lead-in
-st.markdown("## What you can do here")
+st.markdown("### What you can do here")
 st.markdown(
     "Four outcome-oriented modules that take you from exploring the data to explaining decisions—clearly and responsibly."
 )
@@ -36,12 +36,12 @@ st.markdown(
 # Row 1
 c1, c2 = st.columns(2, gap="large")
 with c1:
-    st.markdown("### 📊 Descriptive Analytics")
+    st.markdown("#### 📊 Descriptive Analytics")
     st.markdown(
         "Understand the baseline profile of the dataset — who/what/how much — and surface key patterns at a glance."
     )
 with c2:
-    st.markdown("### 🩺 Diagnostic Analytics")
+    st.markdown("#### 🩺 Diagnostic Analytics")
     st.markdown(
         "Reveal relationships and likely drivers behind differences across groups to inform why outcomes vary."
     )
@@ -49,12 +49,12 @@ with c2:
 # Row 2
 c3, c4 = st.columns(2, gap="large")
 with c3:
-    st.markdown("### 🎯 Predictive Analytics")
+    st.markdown("#### 🎯 Predictive Analytics")
     st.markdown(
         "Generate obesity-level estimates for new cases using a pre-trained model with confidence scores."
     )
 with c4:
-    st.markdown("### 🧭 Prescriptive Analytics")
+    st.markdown("#### 🧭 Prescriptive Analytics")
     st.markdown(
         "Use SHAP to show which features drive each prediction and in what direction—for actionable interpretation."
     )
