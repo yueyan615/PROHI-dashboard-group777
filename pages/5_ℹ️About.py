@@ -25,9 +25,11 @@ def scroll_to(element_id: str):
     )
 
 with st.sidebar:
-    sec = st.radio("On this page", ["Dataset", "Team & Contact", "References"], index=0)
-    mapping = {"Dataset": "Dataset", "Team & Contact": "Team & Contact", "References": "References"}
-    scroll_to(mapping[sec])
+    c1, c2 = st.columns([1, 4])
+    with c2:
+        sec = st.radio("On this page", ["Dataset", "Team & Contact", "References"], index=0)
+        mapping = {"Dataset": "Dataset", "Team & Contact": "Team & Contact", "References": "References"}
+        scroll_to(mapping[sec])
 
 
 
