@@ -222,7 +222,7 @@ if option:
                 with c2:
                     st.plotly_chart(fig, use_container_width=True)
             with tab4:
-                ctab = pd.crosstab(df["Obesity_level"].astype(str), plot_s).reindex(index=OBESITY_ORDER, columns=categories).fillna(0).astype(int)
+                ctab = pd.crosstab(plot_s, df["Obesity_level"].astype(str)).reindex(index=categories, columns=OBESITY_ORDER).fillna(0).astype(int)
                 st.dataframe(ctab, use_container_width=True, height=TABLE_H2)
 
 
