@@ -97,7 +97,7 @@ This dataset has been cleaned and rounded where appropriate; floats in categoric
 """
 
 # display the dataframe
-TABLE_H = 400
+TABLE_H = 240
 
 tab1, tab2 = st.tabs(["Dataframe(cleaned)", "Detials"])
 with tab1:
@@ -143,26 +143,17 @@ with tab2:
     # st.subheader("Columns summary")
     st.dataframe(var_summary_df, use_container_width=True, height=TABLE_H)
 
-
-st.markdown("<br>", unsafe_allow_html=True)
 st.divider()
-st.markdown("<br>", unsafe_allow_html=True)
-
-
-
 
 
 ########################### 2
 st.markdown('<div id="Feature Distributions"></div>', unsafe_allow_html=True)
 
-"""## Feature Distributions"""
-
-
+st.markdown("## Feature Distributions")
+st.markdown("This section lets you inspect individual features: view overall distributions and compare distributions across obesity levels using interactive charts and tables.")
 
 option = st.selectbox("**Select a feature to display**", list(df.columns), index=0)
-
-st.markdown("<br>", unsafe_allow_html=True)
-
+TABLE_H2 = 340
 if option:
     col = option
 
@@ -191,12 +182,12 @@ if option:
 
         tab1, tab2 = st.tabs(["Chart", "Table"])
         with tab1:
-            fig_overall.update_layout(height=TABLE_H)
+            fig_overall.update_layout(height=TABLE_H2)
             c1, c2, c3 = st.columns([1, 4, 1])
             with c2:
-                st.plotly_chart(fig_overall, use_container_width=True, height=TABLE_H)
+                st.plotly_chart(fig_overall, use_container_width=True)
         with tab2:
-            st.dataframe(overall_count, use_container_width=True)
+            st.dataframe(overall_count, use_container_width=True, height=TABLE_H2)
 
         # 分组图（除 'Obesity_level' 与 'BMI' 外）
         if col != 'Obesity_level' and col != 'BMI':
@@ -223,12 +214,12 @@ if option:
             fig.update_layout(legend_title_text="")
             tab3, tab4 = st.tabs(["Chart", "Table"])
             with tab3:
-                fig.update_layout(height=340, width=800)
+                fig.update_layout(height=TABLE_H2)
                 c1, c2, c3 = st.columns([1, 6, 1])
                 with c2:
                     st.plotly_chart(fig, use_container_width=True)
             with tab4:
-                st.dataframe(count_df, use_container_width=True)
+                st.dataframe(count_df, use_container_width=True, height=TABLE_H2)
 
 
     else:
@@ -244,13 +235,13 @@ if option:
 
         tab1, tab2 = st.tabs(["Chart", "Table"])
         with tab1:
-            fig_overall.update_layout(height=340, width=800)
+            fig_overall.update_layout(height=TABLE_H2, width=800)
             c1, c2, c3 = st.columns([1, 3, 1])
             with c2:
                 st.plotly_chart(fig_overall, use_container_width=True)
 
         with tab2:
-            st.dataframe(df[[col]], use_container_width=True)
+            st.dataframe(df[[col]], use_container_width=True, height=TABLE_H2)
 
         # 箱线图（按肥胖等级分组）：所有箱体同色
         st.markdown(f"**{option} Distribution by Obesity Level**")
@@ -271,13 +262,13 @@ if option:
 
         tab3, tab4 = st.tabs(["Chart", "Table"])
         with tab3:
-            fig.update_layout(height=340, width=800)
+            fig.update_layout(height=TABLE_H2, width=800)
             c1, c2, c3 = st.columns([1, 6, 1])
             with c2:
                 st.plotly_chart(fig, use_container_width=True)
 
         with tab4:
-            st.dataframe(df[[col, 'Obesity_level']], use_container_width=True)
+            st.dataframe(df[[col, 'Obesity_level']], use_container_width=True, height=TABLE_H2)
 
 
 
