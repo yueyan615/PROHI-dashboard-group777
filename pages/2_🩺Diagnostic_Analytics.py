@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
+import streamlit.components.v1 as components
+
 
 st.set_page_config(
     page_title="Diagnostic | Obesity Analytics",
@@ -18,7 +20,22 @@ df = pd.read_parquet(file_name)
 img1 = './img/logo.svg'
 st.logo(img1, size= "large", icon_image=None)  
 
-# st.sidebar.caption(f"© 2025 Group 777 | Project Management and Tools for Health Informatics (PROHI)")
+st.sidebar.write("<br>", unsafe_allow_html=True)
+def scroll_to(element_id: str):
+    components.html(
+        f"""
+        <script>
+        const t = window.parent.document.getElementById("{element_id}");
+        if (t) t.scrollIntoView({{behavior: "smooth", block: "start"}});
+        </script>
+        """,
+        height=0,
+    )
+
+with st.sidebar:
+    sec = st.radio("On this page", ["Heatmap"], index=0)
+    mapping = {"Heatmap": "Heatmap"}
+    scroll_to(mapping[sec])
 
 
 
@@ -33,6 +50,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 
 ########################### 1
+st.markdown('<div id="Heatmap"></div>', unsafe_allow_html=True)
 """## Heatmap of Correlation Matrix"""
 
 # 让用户选择相关系数方法
