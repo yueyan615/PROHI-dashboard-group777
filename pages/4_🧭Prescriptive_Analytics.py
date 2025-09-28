@@ -34,4 +34,8 @@ This section provides explanations for the model’s predictions using SHAP. Use
 ########################### 1
 """## SHAP"""
 
-""" Maybe you can find some source here: https://shap.readthedocs.io/en/latest/example_notebooks/tabular_examples/model_agnostic/Multioutput%20Regression%20SHAP.html"""
+""" Sources: 
+1. https://shap.readthedocs.io/en/latest/example_notebooks/tabular_examples/model_agnostic/Multioutput%20Regression%20SHAP.html
+2. https://github.com/snehankekre/streamlit-shap/blob/main/README.md
+"""
+
