@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
 st.set_page_config(
     page_title="About | Obesity Analytics",
@@ -7,10 +8,28 @@ st.set_page_config(
 )
 
 ############################ SIDEBAR
-st.logo("./img/logo.svg", size="large")
+img1 = './img/logo.svg'
+st.logo(img1, size= "large", icon_image=None)  
 
-# with st.sidebar:
-    # st.caption(f"© 2025 Group 777 · Project Management and Tools for Health Informatics (PROHI)")
+
+st.sidebar.write("<br>", unsafe_allow_html=True)
+def scroll_to(element_id: str):
+    components.html(
+        f"""
+        <script>
+        const t = window.parent.document.getElementById("{element_id}");
+        if (t) t.scrollIntoView({{behavior: "smooth", block: "start"}});
+        </script>
+        """,
+        height=0,
+    )
+
+with st.sidebar:
+    sec = st.radio("On this page", ["Dataset", "Team & Contact", "References"], index=0)
+    mapping = {"Dataset": "Dataset", "Team & Contact": "Team & Contact", "References": "References"}
+    scroll_to(mapping[sec])
+
+
 
 ############################ MAIN BODY
 st.title("About")
@@ -23,6 +42,7 @@ st.markdown(
 st.divider()
 
 # ===== Dataset =====
+st.markdown('<div id="Dataset"></div>', unsafe_allow_html=True)
 st.markdown("## Dataset")
 st.markdown(
     'We use the UCI dataset ["Estimation of Obesity Levels Based on Eating Habits and Physical Condition"]'
@@ -49,6 +69,7 @@ with st.expander("UCI dataset details"):
 st.divider()
 
 # ===== Team & Contact =====
+st.markdown('<div id="Team & Contact"></div>', unsafe_allow_html=True)
 st.markdown("## Team & Contact")
 st.markdown(
     "This dashboard was created by Group 777 as part of the assignment for Project Management and Tools for Health Informatics (PROHI).\n\n"
@@ -66,6 +87,7 @@ st.markdown(
 st.divider()
 
 # ===== References =====
+st.markdown('<div id="References"></div>', unsafe_allow_html=True)
 st.markdown("## References")
 st.markdown(
     "[1] Palechor FM, Manotas AH. Dataset for estimation of obesity levels based on eating habits and physical condition in individuals from Colombia, Peru and Mexico. "
