@@ -100,7 +100,7 @@ TABLE_H = 300
 tab1, tab2 = st.tabs(["Dataframe(cleaned)", "Detials"])
 with tab1:
     st.dataframe(df, use_container_width=True, height=TABLE_H)
-    st.write(f"Total: **{df.shape[0]}** rows × **{df.shape[1]}** columns")
+
 
 with tab2:
     
@@ -141,6 +141,8 @@ with tab2:
     # st.subheader("Columns summary")
     st.dataframe(var_summary_df, use_container_width=True, height=TABLE_H)
 
+# option = st.selectbox("**Select a feature to display**", list(df.columns), index=0)
+st.write(f"Total: **{df.shape[0]}** rows × **{df.shape[1]}** columns")
 st.divider()
 
 
@@ -178,7 +180,7 @@ if option:
             color_discrete_map=color_map,
         )
 
-        tab1, tab2 = st.tabs(["Chart", "Category Counts"])
+        tab1, tab2 = st.tabs(["Chart", "Crosstab"])
         with tab1:
             fig_overall.update_layout(height=TABLE_H2)
             c1, c2, c3 = st.columns([1, 4, 1])
@@ -216,7 +218,7 @@ if option:
                 color_discrete_map=color_map,
             )
             fig.update_layout(legend_title_text="")
-            tab3, tab4 = st.tabs(["Chart", "Category Counts"])
+            tab3, tab4 = st.tabs(["Chart", "Crosstab"])
             with tab3:
                 fig.update_layout(height=TABLE_H2)
                 c1, c2, c3 = st.columns([1, 6, 1])
