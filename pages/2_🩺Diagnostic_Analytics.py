@@ -167,7 +167,7 @@ else:
             mat.iloc[j, i] = val
 
     # 绘图：0..1，从白到 #46cdcf
-    custom_scale = [(0.0, "#ffffff"), (1.0, "#46cdcf")]
+    custom_scale = [(0.0, custom_scale[2][1]), (1.0, custom_scale[0][1])]
 
     fig = px.imshow(
         mat,
@@ -182,9 +182,9 @@ else:
 
     fig.update_traces(textfont={"size": 12})
     fig.update_layout(
-        width=1200,
-        height=1000,
-        margin=dict(l=200, r=80, t=80, b=200),
+        width=700,
+        height=600,
+        margin=dict(l=50, r=50, t=80, b=50),
         title=dict(font=dict(size=18)),
         font=dict(size=12)
     )
@@ -205,7 +205,7 @@ else:
         cmax=1
     )
 
-    # st.plotly_chart(fig, use_container_width=False)
+    st.plotly_chart(fig, use_container_width=False)
 
 
 #################################### 3

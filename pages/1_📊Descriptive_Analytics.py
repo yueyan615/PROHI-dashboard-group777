@@ -110,7 +110,7 @@ with tab2:
         s = df[col]
 
         if s.dtype.name == "category":
-            var_type = "Ordinal" if s.cat.ordered else "Categorical"
+            var_type = "Categorical_Ordinal" if s.cat.ordered else "Categorical_Nominal"
             cats = list(map(str, s.cat.categories))
             preview = ", ".join(cats[:20] + (["..."] if len(cats) > 20 else []))
             summary = preview
