@@ -117,7 +117,7 @@ fig.update_coloraxes(
         title=dict(text=""),     # 不显示标题
         y=0.5,
         yanchor="middle",
-        x=0.88,          
+        x=0.9,          
         xanchor="left",
         xpad=0.2
     ),
@@ -205,7 +205,7 @@ else:
         cmax=1
     )
 
-    st.plotly_chart(fig, use_container_width=False)
+    # st.plotly_chart(fig, use_container_width=False)
 
 
 #################################### 3
