@@ -193,6 +193,7 @@ if option:
 
 
 
+  # ...existing code...
         # 分组图（除 'Obesity_level' 与 'BMI' 外）
         if col != 'Obesity_level' and col != 'BMI':
             st.markdown(f"**{option} Distribution by Obesity Level**")
@@ -203,28 +204,47 @@ if option:
             })
             count_df = tmp.groupby(['Obesity_level', col]).size().reset_index(name='Count')
 
-            fig = px.bar(
-                count_df,
-                x='Obesity_level',
-                y='Count',
-                color=col,
-                barmode='group',
-                category_orders={
-                    'Obesity_level': OBESITY_ORDER,
-                    col: categories
-                },
-                color_discrete_map=color_map,
-            )
-            fig.update_layout(legend_title_text="")
             tab3, tab4 = st.tabs(["Chart", "Crosstab"])
             with tab3:
-                fig.update_layout(height=TABLE_H2)
-                c1, c2, c3 = st.columns([1, 6, 1])
-                with c2:
-                    st.plotly_chart(fig, use_container_width=True)
+                # 计算每个肥胖等级内的百分比
+                count_df_with_pct = count_df.copy()
+                count_df_with_pct['Percentage'] = count_df_with_pct.groupby('Obesity_level')['Count'].transform(
+                    lambda x: (x / x.sum() * 100).round(1)
+                )
+                count_df_with_pct['Label'] = count_df_with_pct['Count'].astype(str) + '<br>(' + count_df_with_pct['Percentage'].astype(str) + '%)'
+                
+                fig = px.bar(
+                    count_df_with_pct,
+                    x='Obesity_level',
+                    y='Count',
+                    color=col,
+                    barmode='group',
+                    category_orders={
+                        'Obesity_level': OBESITY_ORDER,
+                        col: categories
+                    },
+                    color_discrete_map=color_map,
+                    text='Label'  # 使用自定义标签
+                )
+                fig.update_layout(
+                    height=TABLE_H2,
+                    legend_title_text="",
+                    bargap=0.3,        # 控制不同组（肥胖等级）间的间距
+                    bargroupgap=0.1    # 控制同组内柱子间的间距
+                )
+                # 设置文本显示位置和样式
+                fig.update_traces(
+                    textposition='outside',
+                    textfont=dict(size=10)
+                )
+                st.plotly_chart(fig, use_container_width=True)
+                # c1, c2, c3 = st.columns([1, 6, 1])
+                # with c2:
+                #     st.plotly_chart(fig, use_container_width=True)
             with tab4:
                 ctab = pd.crosstab(plot_s, df["Obesity_level"].astype(str)).reindex(index=categories, columns=OBESITY_ORDER).fillna(0).astype(int)
                 st.dataframe(ctab, use_container_width=True, height=TABLE_H2)
+# ...existing code...
 
 
     else:
