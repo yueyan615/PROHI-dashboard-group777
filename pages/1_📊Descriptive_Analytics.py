@@ -14,7 +14,7 @@ st.set_page_config(
 )
 
 # load the dataset
-file_name = './assets/ObesityDataSet_cleaned.parquet'
+file_name = './assets/ObesityDataSet_BMI.parquet'
 df = pd.read_parquet(file_name)
 
 
@@ -161,7 +161,7 @@ if option:
     if df[col].dtype == "bool" or df[col].nunique() <= 10:
 
          # ====== 分类/布尔变量：统一配色与标签 ======
-        st.markdown(f"**Overall {option} Distribution**")
+        st.markdown(f"#### Overall {option} Distribution")
 
         # 统一为字符串 + 取得类别与颜色映射
         plot_s, categories, color_map = categorical_setup(df[col])
@@ -191,12 +191,14 @@ if option:
             total = overall_count["Count"].sum()
             st.dataframe(overall_count, use_container_width=True, height=TABLE_H2)
 
+        st.divider()
+
 
 
   # ...existing code...
         # 分组图（除 'Obesity_level' 与 'BMI' 外）
         if col != 'Obesity_level' and col != 'BMI':
-            st.markdown(f"**{option} Distribution by Obesity Level**")
+            st.markdown(f"#### {option} Distribution by Obesity Level")
             # 注意：分组时用字符串列 plot_s
             tmp = pd.DataFrame({
                 'Obesity_level': df['Obesity_level'].astype(str),
@@ -244,12 +246,134 @@ if option:
             with tab4:
                 ctab = pd.crosstab(plot_s, df["Obesity_level"].astype(str)).reindex(index=categories, columns=OBESITY_ORDER).fillna(0).astype(int)
                 st.dataframe(ctab, use_container_width=True, height=TABLE_H2)
+        st.divider()
+################################################ 3 每个类别的肥胖等级分布饼图
+        st.markdown(f"#### Obesity Level Distribution for each {option} Category")
+        # 饼图1：展示该option各分类的肥胖水平占比
 # ...existing code...
+        # 用简单的颜色块显示图例（分2行显示）
+        # st.markdown(f"**Legend for Obesity Levels:**")
+        
+        # 第一行：前4个
+        legend_cols_1 = st.columns(4)
+        for i in range(4):
+            if i < len(OBESITY_ORDER):
+                obesity_level = OBESITY_ORDER[i]
+                with legend_cols_1[i]:
+                    color = PALETTE[i % len(PALETTE)]
+                    st.markdown(
+                        f'<div style="display: flex; align-items: center; margin-bottom: 5px;">'
+                        f'<div style="width: 12px; height: 12px; background-color: {color}; margin-right: 6px; border-radius: 2px;"></div>'
+                        f'<span style="font-size: 11px;">{obesity_level}</span>'
+                        f'</div>',
+                        unsafe_allow_html=True
+                    )
+        
+        # 第二行：后3个
+        legend_cols_2 = st.columns([1, 1, 1, 1])  # 4列但只用前3列，保持居中
+        for i in range(3):
+            idx = i + 4
+            if idx < len(OBESITY_ORDER):
+                obesity_level = OBESITY_ORDER[idx]
+                with legend_cols_2[i]:
+                    color = PALETTE[idx % len(PALETTE)]
+                    st.markdown(
+                        f'<div style="display: flex; align-items: center; margin-bottom: 5px;">'
+                        f'<div style="width: 12px; height: 12px; background-color: {color}; margin-right: 6px; border-radius: 2px;"></div>'
+                        f'<span style="font-size: 11px;">{obesity_level}</span>'
+                        f'</div>',
+                        unsafe_allow_html=True
+                    )
+# ...existing code...
+        
+        # 添加间距
+        st.write("")
+        
+        # 为每个类别分别绘制肥胖等级分布饼图
+        num_categories = len(categories)
+        cols_per_row = min(3, num_categories)  # 每行最多3个饼图
+        
+        for i, category in enumerate(categories):
+            if i % cols_per_row == 0:
+                # 创建新行，并在每行之间添加间距
+                if i > 0:
+                    st.write("")  # 行间距
+                pie_cols = st.columns(cols_per_row, gap="medium")  # 增加列间距
+            
+            # 当前类别下的肥胖等级分布
+            category_data = count_df[count_df[col] == category]
+            
+            with pie_cols[i % cols_per_row]:
+                if not category_data.empty:
+                    fig_cat_pie = px.pie(
+                        category_data,
+                        names='Obesity_level',
+                        values='Count',
+                        title=f"{category}",
+                        category_orders={'Obesity_level': OBESITY_ORDER},
+                        color='Obesity_level',
+                        color_discrete_map={lvl: PALETTE[i % len(PALETTE)] for i, lvl in enumerate(OBESITY_ORDER)},
+                    )
+                    # 添加百分比和计数标签到饼图上
+                    fig_cat_pie.update_traces(
+                        texttemplate='%{value}<br>(%{percent})',  # 显示计数和百分比
+                        textposition='inside',
+                        textfont_size=10
+                    )
+                    fig_cat_pie.update_layout(
+                        height=240,
+                        showlegend=False,  # 各个饼图不显示图例，使用共用图例
+                        title_font_size=16,
+                        # title_x=0.4,
+                        margin=dict(t=35, b=15, l=0, r=15)
+                    )
+                    st.plotly_chart(fig_cat_pie, use_container_width=True)
+                else:
+                    st.write(f"No data for {category}")
+        
+
+# ...existing code...
+# ...existing code...
+############################################################# 4 每个类别的BMI分布箱线图
+        st.divider()
+        # 盒图2：展示该option各分类的BMI分布
+        st.markdown(f"#### BMI Distribution for each {option} Category")
+        
+        fig_box = px.box(
+            df,
+            x=col,
+            y='BMI',
+            category_orders={col: categories},
+            color=col,
+            color_discrete_map=color_map,
+        )
+        fig_box.update_layout(
+            height=400,
+            title="",
+            title_font_size=14,
+            legend_title_text="",
+            margin=dict(t=50, b=50, l=50, r=50)
+        )
+        
+        c1, c2, c3 = st.columns([1, 6, 1])
+        with c2:
+            st.plotly_chart(fig_box, use_container_width=True)
+        
+    
+# ...existing code...
+
+
+
+
+                        
+
 
 
     else:
         # ====== 连续变量：统一主色为 PALETTE[0] ======
         st.markdown(f"**Overall {option} Distribution**")
+        category_options = list(df[option].unique())
+
         fig_overall = px.histogram(
             df,
             x=col,
