@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 # load the dataset
-file_name = './assets/ObesityDataSet_cleaned.parquet'
+file_name = './assets/ObesityDataSet_BMI.parquet'
 df = pd.read_parquet(file_name)
 
 ############################ SIDEBAR
