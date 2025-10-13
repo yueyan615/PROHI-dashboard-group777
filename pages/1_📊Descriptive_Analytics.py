@@ -325,7 +325,7 @@ if option:
                         showlegend=False,  # 各个饼图不显示图例，使用共用图例
                         title_font_size=16,
                         # title_x=0.4,
-                        margin=dict(t=35, b=15, l=0, r=15)
+                        margin=dict(t=35, b=15, l=15, r=15)
                     )
                     st.plotly_chart(fig_cat_pie, use_container_width=True)
                 else:
@@ -354,8 +354,16 @@ if option:
             legend_title_text="",
             margin=dict(t=50, b=50, l=50, r=50)
         )
-        
-        c1, c2, c3 = st.columns([1, 6, 1])
+
+        c1, c2 = st.columns([1, 3], gap="large")
+        with c1:
+            st.markdown("<br><b></b>", unsafe_allow_html=True)
+
+            st.write("**Mean BMI for each category**")
+            for category in categories:
+                mean_bmi = df[df[col] == category]['BMI'].mean()
+                st.write(f"- {category}: {mean_bmi:.2f}")
+
         with c2:
             st.plotly_chart(fig_box, use_container_width=True)
         
