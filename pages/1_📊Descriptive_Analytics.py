@@ -257,10 +257,6 @@ if option:
 ############################# 2.3 Each Category's Obesity Level Distribution Pie Charts #############################
         st.markdown(f"#### Obesity Level Distribution for each {option} Category")
         # 饼图1：展示该option各分类的肥胖水平占比
-# ...existing code...
-        # 用简单的颜色块显示图例（分2行显示）
-        # st.markdown(f"**Legend for Obesity Levels:**")
-        
         # 第一行：前4个
         legend_cols_1 = st.columns(4)
         for i in range(4):
@@ -325,7 +321,11 @@ if option:
                     fig_cat_pie.update_traces(
                         texttemplate='%{value}<br>(%{percent})',  # 显示计数和百分比
                         textposition='inside',
-                        textfont_size=10
+                        textfont_size=10,
+                        hovertemplate='<b>%{label}</b><br>' +      # 显示肥胖等级名称
+                                    'Count: %{value}<br>' +       # 显示计数
+                                    'Percentage: %{percent}<br>' +# 显示百分比
+                                    '<extra></extra>'             # 移除默认的trace box
                     )
                     fig_cat_pie.update_layout(
                         height=240,
@@ -339,8 +339,7 @@ if option:
                     st.write(f"No data for {category}")
         
 
-# ...existing code...
-# ...existing code...
+
 ############################## 2.4 BMI Distribution by Each Category ##############################
         st.divider()
         # 盒图2：展示该option各分类的BMI分布
