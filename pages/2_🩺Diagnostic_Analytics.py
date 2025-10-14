@@ -65,7 +65,7 @@ with col1:
     }
 
     method_key = st.pills(
-        "**Correlation method**",
+        "**Choose a correlation method:**",
         options=option_map.keys(),
         format_func=lambda option: option_map[option].capitalize(),  # 显示时首字母大写
         selection_mode="single",
@@ -80,7 +80,7 @@ with col1:
 
 
     # Add explanation
-    with st.expander("**How to choose correlation methods?**"):
+    with st.expander("**How to choose?**"):
         st.markdown("""
             - **Pearson**: Most common; measures linear relationships; sensitive to outliers.  
             - **Spearman**: Rank-based; better for monotonic but non-linear relationships.  
@@ -91,7 +91,7 @@ with col1:
 with col2:
     options = df.columns.tolist()
     selected_features = st.pills(
-        "**Feature Selection**", 
+        "**Choose features to display in heatmap:**", 
         options, 
         selection_mode="multi",
         default=options)
@@ -126,12 +126,12 @@ fig_heatmap = px.imshow(
 
 # Update layout - enlarge the image
 fig_heatmap.update_layout(
-    height=max(800, 35 * len(corr.columns)),  
-    width=max(800, 35 * len(corr.columns)),   
+    height=max(700, 30 * len(corr.columns)),  
+    width=max(700, 30 * len(corr.columns)),   
     xaxis_title="Features",
     yaxis_title="Features",
     font=dict(size=12),  
-    margin=dict(l=120, r=120, t=30, b=120),  
+    margin=dict(l=120, r=120, t=50, b=120),  
 )
 
 
@@ -158,6 +158,10 @@ fig_heatmap.update_xaxes(tickangle=45)
 
 # Show the heatmap
 st.plotly_chart(fig_heatmap, use_container_width=True)
+
+# Add explanation
+st.info(f"ℹ️ Since Transportation_mode is an ordinal feature, it has been one-hot encoded to allow for better correlation analysis.")
+
 
 st.divider()
 # ================== Display highly correlated feature pairs  ===================
@@ -237,8 +241,8 @@ fig_bar.update_layout(
             title=dict(text="Correlation", font=dict(size=12)), 
             tickfont=dict(size=10),
             len=1.0,
-            x=1.15,
-            xanchor="left"
+            x=1.05,
+            # xanchor="left"
         )
     )
 )
@@ -257,12 +261,12 @@ fig_bar.update_traces(
 fig_bar.add_vline(x=0, line_dash="dash", line_color="gray", line_width=1)
 
 # Show the chart
-col1, col2, col3 = st.columns([1, 7, 1])
+col1, col2, col3 = st.columns([0.5, 20, 1])
 with col2:
     st.plotly_chart(fig_bar, use_container_width=True)
 
 # Add explanation
-st.info(f"📊 Showing top 10 feature pairs ranked by absolute correlation strength. "
+st.info(f"ℹ️ Showing top 10 feature pairs ranked by absolute correlation strength. "
         f"Blue bars indicate negative correlation, orange bars indicate positive correlation.")
 
 
