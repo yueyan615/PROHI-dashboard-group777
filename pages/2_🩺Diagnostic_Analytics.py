@@ -47,16 +47,41 @@ st.markdown('<div id="Diagnostic Analytics"></div>', unsafe_allow_html=True)
 This section helps users explore relationships between variables. Through correlations, statistical tests, and clustering, users can investigate potential factors that explain differences in obesity levels.
 """
 
+########################### 0
+"""## A Quick Look"""
 
+container = st.container(border=True)
+with container:
+    col1, col2 = st.columns([1, 2], gap="large")
+    with col2:
+        two_options = st.multiselect(
+            "Select exactly 2 features to see their correlation:", 
+            df.columns.tolist(), 
+            default=df.columns.tolist()[:2], 
+            key="two_feature_selection",
+            max_selections=2
+            )
+
+    with col1:
+        if two_options and len(two_options) == 2:
+            corr_two = df[two_options].corr()
+            st.metric(f"Correlation Coefficient", f"{corr_two.iloc[0, 1]:.3f}")
+        elif len(two_options) < 2:
+            st.info("Please select exactly 2 features")
+        else:
+            st.warning("Please select only 2 features")
+
+# Add explanation
+st.info(f"ℹ️ The default method here for correlation calculation is Pearson")
+st.divider()
 
 ########################### 1
 st.markdown('<div id="Heatmap"></div>', unsafe_allow_html=True)
 """## Heatmap of Correlation Matrix"""
 
-
+# ================== correlation elements pills  ===================
 col1, col2 = st.columns([1, 2], gap="large")
 
-# ================== correlation coefficient method select pills  ===================
 with col1:
     option_map = {
         0: "pearson",
@@ -69,7 +94,7 @@ with col1:
         options=option_map.keys(),
         format_func=lambda option: option_map[option].capitalize(),  # 显示时首字母大写
         selection_mode="single",
-        default=0, 
+        default=0
     )
 
     # If no option is selected, use the default value.
@@ -94,7 +119,9 @@ with col2:
         "**Choose features to display in heatmap:**", 
         options, 
         selection_mode="multi",
-        default=options)
+        default=options,
+        key="correlation_method"
+    )
 
 
 
@@ -164,7 +191,9 @@ st.info(f"ℹ️ Since Transportation_mode is an ordinal feature, it has been on
 
 
 st.divider()
-# ================== Display highly correlated feature pairs  ===================
+
+
+########################### 2 Display highly correlated feature pairs
 st.markdown("## Top 10 High Correlation Feature Pairs")
 
 # Create a mask to get the upper triangle of the correlation matrix, excluding the diagonal
@@ -183,9 +212,10 @@ for i in range(len(corr_masked.columns)):
                 'Correlation': corr_masked.iloc[i, j]
             })
 
+num_pairs = st.slider("Choose number of pairs to display:", 1, 20, 10, key="num_pairs_slider")
 
 # Sort by absolute value and take the top 10
-high_corr_df = pd.DataFrame(high_corr_pairs).sort_values('Correlation', key=abs, ascending=False).head(10)
+high_corr_df = pd.DataFrame(high_corr_pairs).sort_values('Correlation', key=abs, ascending=False).head(num_pairs)
 
 # Create feature pairs with labels (shorten the labels to improve readability)
 high_corr_df['Feature_Pair'] = high_corr_df.apply(
@@ -273,7 +303,7 @@ st.info(f"ℹ️ Showing top 10 feature pairs ranked by absolute correlation str
 
 
 st.divider()
-# ================== Summary of Correlation Statistics  ===================
+########################### 3 Summary of Correlation Statistics 
 st.markdown("## Correlation Summary")
 col1, col2, col3, col4 = st.columns(4)
 
