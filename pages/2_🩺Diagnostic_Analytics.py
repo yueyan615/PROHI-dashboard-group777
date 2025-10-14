@@ -95,7 +95,7 @@ with col1:
     method_key = st.pills(
         "**Correlation Methods:**",
         options=option_map.keys(),
-        format_func=lambda option: option_map[option].capitalize(),  # 显示时首字母大写
+        format_func=lambda option: option_map[option].capitalize(),  # Display the first letter capitalized
         selection_mode="single",
         default=0
     )
@@ -140,9 +140,9 @@ st.markdown(f"#### Correlation Matrix ({method.capitalize()} method)")
 corr = df[selected_features].corr(method=method)
 
 custom_scale = [
-    (0.0, "#0072b2"),   # 对应 zmin (-1) - 蓝色
-    (0.5, "#ffffff"),   # 对应 0 - 白色
-    (1.0, "#e69f00"),   # 对应 zmax (1) - 橙色
+    (0.0, "#0072b2"),   # Corresponds to zmin (-1) - Blue
+    (0.5, "#ffffff"),   # Corresponds to 0 - White
+    (1.0, "#e69f00"),   # Corresponds to zmax (1) - Orange
 ]
 
 # Create a heatmap
@@ -224,9 +224,9 @@ for i in range(len(corr_masked.columns)):
             })
 
 # Dynamically set the maximum value of the slider to the actual number of pairs
-max_pairs = min(len(high_corr_pairs), 20)  # 最多显示20个
+max_pairs = min(len(high_corr_pairs), 20)  # Display a maximum of 20 pairs
 
-# 处理边界情况：当只有1个或0个配对时
+# When there is only 1 or 0 pairs：
 if max_pairs == 0:
     st.warning("⚠️ No feature pairs available. Please select at least 2 features in the heatmap section.")
     num_pairs = 0
@@ -234,10 +234,10 @@ elif max_pairs == 1:
     st.info("Only 1 feature pair available from selected features, showing it below:")
     num_pairs = 1
 else:
-    # 只有当配对数量大于1时才显示slider
+    # The slider is only displayed when the number of pairs is greater than 1.
     num_pairs = st.slider("Choose number of pairs to display:", 1, max_pairs, min(10, max_pairs), key="num_pairs_slider")
 
-# 只有当有配对数据时才处理DataFrame和图表
+# Process the DataFrame and charts only when there is paired data.
 if len(high_corr_pairs) > 0:
     # Sort by absolute value and take the top num_pairs
     high_corr_df = pd.DataFrame(high_corr_pairs).sort_values('Correlation', key=abs, ascending=False).head(num_pairs)
@@ -318,14 +318,16 @@ if len(high_corr_pairs) > 0:
     with col2:
         st.plotly_chart(fig_bar, use_container_width=True)
 
-
-
-# 如果没有足够的特征来计算相关性，不显示任何内容
-
-
 st.divider()
+
+
 ########################### 3 Summary of Correlation Statistics 
 st.markdown("#### Correlation Summary")
+
+# Slider for threshold
+threshold = st.slider("Threshold for High Correlation:", 0.0, 1.0, 0.5, 0.01, key="high_corr_threshold")
+
+# Calculate summary statistics
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
@@ -339,6 +341,6 @@ with col3:
     st.metric("Average |Correlation|", f"{avg_corr:.3f}")
 
 with col4:
-    high_corr_count = (corr_masked.abs() >= 0.5).sum().sum()
-    st.metric("High Corr Pairs (≥0.5)", high_corr_count)
+    high_corr_count = (corr_masked.abs() >= threshold).sum().sum()
+    st.metric(f"High Corr Pairs (≥{threshold})", high_corr_count)
 
