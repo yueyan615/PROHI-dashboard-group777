@@ -81,6 +81,8 @@ st.markdown('<div id="Heatmap"></div>', unsafe_allow_html=True)
 """## Heatmap of Correlation Matrix"""
 
 # ================== correlation elements pills  ===================
+st.markdown("#### Customize Correlation Heatmap")
+
 col1, col2 = st.columns([1, 2], gap="large")
 
 with col1:
@@ -91,7 +93,7 @@ with col1:
     }
 
     method_key = st.pills(
-        "**Choose a correlation method:**",
+        "**Correlation Methods:**",
         options=option_map.keys(),
         format_func=lambda option: option_map[option].capitalize(),  # 显示时首字母大写
         selection_mode="single",
@@ -117,12 +119,15 @@ with col1:
 with col2:
     options = df.columns.tolist()
     selected_features = st.pills(
-        "**Choose features to display in heatmap:**", 
+        "**Features:**", 
         options, 
         selection_mode="multi",
         default=options,
         key="correlation_method"
     )
+    # Add explanation
+    st.info(f"ℹ️ Since Transportation_mode is an ordinal feature, it has been one-hot encoded to allow for better correlation analysis.")
+
 
 
 
@@ -130,7 +135,8 @@ with col2:
 # ================== heatmap  ===================
 # Calculate the correlation matrix
 st.markdown("<br>", unsafe_allow_html=True)
-# st.markdown(f"### Correlation Matrix ({method.capitalize()} method)")
+st.markdown(f"#### Correlation Matrix ({method.capitalize()} method)")
+
 corr = df[selected_features].corr(method=method)
 
 custom_scale = [
@@ -149,7 +155,7 @@ fig_heatmap = px.imshow(
     zmax=1,
     aspect="auto",
     text_auto=".2f",
-    title=f"Correlation Matrix ({method.capitalize()} method)"
+    # title=f"Correlation Matrix ({method.capitalize()} method)"
 )
 
 # Update layout - enlarge the image
@@ -187,19 +193,23 @@ fig_heatmap.update_xaxes(tickangle=45)
 # Show the heatmap
 st.plotly_chart(fig_heatmap, use_container_width=True)
 
-# Add explanation
-st.info(f"ℹ️ Since Transportation_mode is an ordinal feature, it has been one-hot encoded to allow for better correlation analysis.")
 
 
 st.divider()
 
 
+
 ########################### 2 Display highly correlated feature pairs
-st.markdown("## Top 20 High Correlation Feature Pairs")
+st.markdown("#### High Correlation Feature Pairs")
+
+
+
+# Calculate the correlation matrix using the features selected by the user
+selected_corr = df[selected_features].corr(method=method)
 
 # Create a mask to get the upper triangle of the correlation matrix, excluding the diagonal
-mask = np.triu(np.ones_like(corr, dtype=bool), k=1)
-corr_masked = corr.where(mask)
+mask = np.triu(np.ones_like(selected_corr, dtype=bool), k=1)
+corr_masked = selected_corr.where(mask)
 
 # Extract feature pairs with high correlation
 high_corr_pairs = []
@@ -213,99 +223,109 @@ for i in range(len(corr_masked.columns)):
                 'Correlation': corr_masked.iloc[i, j]
             })
 
-num_pairs = st.slider("Choose number of pairs to display:", 1, 20, 10, key="num_pairs_slider")
+# Dynamically set the maximum value of the slider to the actual number of pairs
+max_pairs = min(len(high_corr_pairs), 20)  # 最多显示20个
 
-# Sort by absolute value and take the top 10
-high_corr_df = pd.DataFrame(high_corr_pairs).sort_values('Correlation', key=abs, ascending=False).head(num_pairs)
+# 处理边界情况：当只有1个或0个配对时
+if max_pairs == 0:
+    st.warning("⚠️ No feature pairs available. Please select at least 2 features in the heatmap section.")
+    num_pairs = 0
+elif max_pairs == 1:
+    st.info("Only 1 feature pair available from selected features, showing it below:")
+    num_pairs = 1
+else:
+    # 只有当配对数量大于1时才显示slider
+    num_pairs = st.slider("Choose number of pairs to display:", 1, max_pairs, min(10, max_pairs), key="num_pairs_slider")
 
-# Create feature pairs with labels (shorten the labels to improve readability)
-high_corr_df['Feature_Pair'] = high_corr_df.apply(
-    lambda row: f"{row['Feature 1'][:15]}{'...' if len(row['Feature 1']) > 15 else ''} ↔ {row['Feature 2'][:15]}{'...' if len(row['Feature 2']) > 15 else ''}", 
-    axis=1
-)
+# 只有当有配对数据时才处理DataFrame和图表
+if len(high_corr_pairs) > 0:
+    # Sort by absolute value and take the top num_pairs
+    high_corr_df = pd.DataFrame(high_corr_pairs).sort_values('Correlation', key=abs, ascending=False).head(num_pairs)
 
+    # Create feature pairs with labels (shorten the labels to improve readability)
+    high_corr_df['Feature_Pair'] = high_corr_df.apply(
+        lambda row: f"{row['Feature 1'][:15]}{'...' if len(row['Feature 1']) > 15 else ''} ↔ {row['Feature 2'][:15]}{'...' if len(row['Feature 2']) > 15 else ''}", 
+        axis=1
+    )
 
-# Create a horizontal bar chart
-fig_bar = px.bar(
-    high_corr_df, 
-    x='Correlation',
-    y='Feature_Pair',
-    orientation='h',
-    color='Correlation',
-    color_continuous_scale=[
-        (0.0, "#0072b2"),   
-        (0.5, "#ffffff"),     
-        (1.0, "#e69f00")    
-    ],
-    range_color=[-1, 1],
-    text=[f"{corr:.3f}" for corr in high_corr_df['Correlation']],
-    title="",
-    hover_data={
-        'Feature 1': True,
-        'Feature 2': True, 
-        'Correlation': ':.3f',
-        'Feature_Pair': False
-    }
-)
+    # Create a horizontal bar chart
+    fig_bar = px.bar(
+        high_corr_df, 
+        x='Correlation',
+        y='Feature_Pair',
+        orientation='h',
+        color='Correlation',
+        color_continuous_scale=[
+            (0.0, "#0072b2"),   
+            (0.5, "#ffffff"),     
+            (1.0, "#e69f00")    
+        ],
+        range_color=[-1, 1],
+        text=[f"{corr:.3f}" for corr in high_corr_df['Correlation']],
+        title="",
+        hover_data={
+            'Feature 1': True,
+            'Feature 2': True, 
+            'Correlation': ':.3f',
+            'Feature_Pair': False
+        }
+    )
 
-# Update layout
-fig_bar.update_layout(
-    height=max(400, 40 * len(high_corr_df)),  # Adjust the height according to the amount of data
-    yaxis=dict(
-        autorange="reversed",  # Arrange from top to bottom (rank 1 at the top)
-        title="Feature Pairs",
-        tickfont=dict(size=10)
-    ),
-    xaxis=dict(
-        range=[-1, 1],  # Fixed range from -1 to 1
-        title="Correlation Coefficient",
-        tickvals=[-1, -0.5, 0, 0.5, 1],
-        ticktext=['-1.0', '-0.5', '0.0', '0.5', '1.0']
-    ),
-    showlegend=False,
-    margin=dict(l=250, r=150, t=50, b=50),  
-    font=dict(size=11),
-    plot_bgcolor='rgba(0,0,0,0)',  # Transparent background
-    coloraxis_showscale=True,  # Show color scale
-    coloraxis=dict(
-        colorbar=dict(
-            title=dict(text="Correlation", font=dict(size=12)), 
-            tickfont=dict(size=10),
-            len=1.0,
-            x=1.05,
-            # xanchor="left"
+    # Update layout
+    fig_bar.update_layout(
+        height=max(400, 40 * len(high_corr_df)),
+        yaxis=dict(
+            autorange="reversed",
+            title="Feature Pairs",
+            tickfont=dict(size=10)
+        ),
+        xaxis=dict(
+            range=[-1, 1],
+            title="Correlation Coefficient",
+            tickvals=[-1, -0.5, 0, 0.5, 1],
+            ticktext=['-1.0', '-0.5', '0.0', '0.5', '1.0']
+        ),
+        showlegend=False,
+        margin=dict(l=250, r=150, t=50, b=50),  
+        font=dict(size=11),
+        plot_bgcolor='rgba(0,0,0,0)',
+        coloraxis_showscale=True,
+        coloraxis=dict(
+            colorbar=dict(
+                title=dict(text="Correlation", font=dict(size=12)), 
+                tickfont=dict(size=10),
+                len=1.0,
+                x=1.05,
+            )
         )
     )
-)
 
-# text position outside the bars and customize hover information
-fig_bar.update_traces(
-    textposition='outside',
-    textfont=dict(size=10, color='black'),
-    hovertemplate='<b>%{customdata[0]}</b> ↔ <b>%{customdata[1]}</b><br>' +
-                    'Correlation: %{x:.3f}<br>' +
-                    '<extra></extra>',
-    customdata=high_corr_df[['Feature 1', 'Feature 2']].values
-)
+    # text position outside the bars and customize hover information
+    fig_bar.update_traces(
+        textposition='outside',
+        textfont=dict(size=10, color='black'),
+        hovertemplate='<b>%{customdata[0]}</b> ↔ <b>%{customdata[1]}</b><br>' +
+                        'Correlation: %{x:.3f}<br>' +
+                        '<extra></extra>',
+        customdata=high_corr_df[['Feature 1', 'Feature 2']].values
+    )
 
-# Add a vertical line at x=0
-fig_bar.add_vline(x=0, line_dash="dash", line_color="gray", line_width=1)
+    # Add a vertical line at x=0
+    fig_bar.add_vline(x=0, line_dash="dash", line_color="gray", line_width=1)
 
-# Show the chart
-col1, col2, col3 = st.columns([0.5, 20, 1])
-with col2:
-    st.plotly_chart(fig_bar, use_container_width=True)
-
-# Add explanation
-st.info(f"ℹ️ Showing top 10 feature pairs ranked by absolute correlation strength. "
-        f"Blue bars indicate negative correlation, orange bars indicate positive correlation.")
+    # Show the chart
+    col1, col2, col3 = st.columns([0.5, 20, 1])
+    with col2:
+        st.plotly_chart(fig_bar, use_container_width=True)
 
 
+
+# 如果没有足够的特征来计算相关性，不显示任何内容
 
 
 st.divider()
 ########################### 3 Summary of Correlation Statistics 
-st.markdown("## Correlation Summary")
+st.markdown("#### Correlation Summary")
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
