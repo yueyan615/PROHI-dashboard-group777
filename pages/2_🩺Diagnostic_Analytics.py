@@ -34,8 +34,8 @@ def scroll_to(element_id: str):
     )
 
 with st.sidebar:
-    sec = st.radio("Navigate on the page", ["Diagnostic Analytics","Heatmap"], index=0)
-    mapping = {"Diagnostic Analytics": "Diagnostic Analytics", "Heatmap": "Heatmap"}
+    sec = st.radio("Navigate on the page", ["Diagnostic Analytics","Quick Correlation Check","Heatmap"], index=0)
+    mapping = {"Diagnostic Analytics": "Diagnostic Analytics", "Quick Correlation Check": "Quick Correlation Check", "Heatmap": "Heatmap"}
     scroll_to(mapping[sec])
 
 
@@ -49,6 +49,7 @@ This section helps users explore relationships between variables. Through correl
 """
 
 ########################### 0
+st.markdown('<div id="Quick Correlation Check"></div>', unsafe_allow_html=True)
 """## Quick Correlation Check"""
 
 container = st.container(border=True)
