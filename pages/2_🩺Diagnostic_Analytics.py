@@ -20,6 +20,7 @@ df = pd.read_parquet(file_name)
 img1 = './img/logo.svg'
 st.logo(img1, size= "large", icon_image=None)  
 
+### Navigation on the page
 st.sidebar.write("<br>", unsafe_allow_html=True)
 def scroll_to(element_id: str):
     components.html(
@@ -194,7 +195,7 @@ st.divider()
 
 
 ########################### 2 Display highly correlated feature pairs
-st.markdown("## Top 10 High Correlation Feature Pairs")
+st.markdown("## Top 20 High Correlation Feature Pairs")
 
 # Create a mask to get the upper triangle of the correlation matrix, excluding the diagonal
 mask = np.triu(np.ones_like(corr, dtype=bool), k=1)
