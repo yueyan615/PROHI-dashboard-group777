@@ -1,4 +1,4 @@
-
+# you need "pip install streamlit-shap" if you haven't already installed it with the requirements.txt
 
 import streamlit as st
 import pandas as pd
