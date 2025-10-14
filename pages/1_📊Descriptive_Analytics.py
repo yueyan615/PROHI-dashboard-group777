@@ -77,7 +77,7 @@ with st.sidebar:
 
 
 
-############################ MAIN BODY
+############################ MAIN BODY ############################
 st.markdown('<div id="Descriptive Analytics"></div>', unsafe_allow_html=True)
 """ # Descriptive Analytics"""
 
@@ -87,7 +87,7 @@ This section provides an overview of the dataset. Users can explore basic summar
 
 
 
-########################### 1
+########################### 1 ####################################
 st.markdown('<div id="Obesity Dataset"></div>', unsafe_allow_html=True)
 """## Obesity Dataset"""
 """
@@ -146,7 +146,7 @@ st.write(f"Total: **{df.shape[0]}** rows × **{df.shape[1]}** columns")
 st.divider()
 
 
-########################### 2
+########################### 2 ####################################
 st.markdown('<div id="Variable Distributions"></div>', unsafe_allow_html=True)
 
 st.markdown("## Variable Distributions")
@@ -166,6 +166,7 @@ if option:
         # 统一为字符串 + 取得类别与颜色映射
         plot_s, categories, color_map = categorical_setup(df[col])
 
+########################### 2.1 Overall Distribution ##############################
         # Overall 计数（使用字符串列）
         overall_count = plot_s.value_counts(dropna=False).reindex(categories).reset_index()
         overall_count.columns = [col, "Count"]
@@ -195,7 +196,7 @@ if option:
 
 
 
-  # ...existing code...
+############################ 2.2 Distribution by Obesity Level ##############################
         # 分组图（除 'Obesity_level' 与 'BMI' 外）
         if col != 'Obesity_level' and col != 'BMI':
             st.markdown(f"#### {option} Distribution by Obesity Level")
@@ -247,7 +248,7 @@ if option:
                 ctab = pd.crosstab(plot_s, df["Obesity_level"].astype(str)).reindex(index=categories, columns=OBESITY_ORDER).fillna(0).astype(int)
                 st.dataframe(ctab, use_container_width=True, height=TABLE_H2)
         st.divider()
-################################################ 3 每个类别的肥胖等级分布饼图
+############################# 2.3 Each Category's Obesity Level Distribution Pie Charts #############################
         st.markdown(f"#### Obesity Level Distribution for each {option} Category")
         # 饼图1：展示该option各分类的肥胖水平占比
 # ...existing code...
@@ -334,7 +335,7 @@ if option:
 
 # ...existing code...
 # ...existing code...
-############################################################# 4 每个类别的BMI分布箱线图
+############################## 2.4 BMI Distribution by Each Category ##############################
         st.divider()
         # 盒图2：展示该option各分类的BMI分布
         st.markdown(f"#### BMI Distribution for each {option} Category")
