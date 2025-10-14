@@ -3,6 +3,8 @@ import pickle
 import pandas as pd
 import numpy as np
 import streamlit.components.v1 as components
+import shap
+import matplotlib.pyplot as plt
 
 st.set_page_config(
     page_title="Predictive Analytics | Obesity Analytics",
@@ -73,6 +75,8 @@ This section allows users to input new data and obtain predictions on obesity le
 
 
 ### Example of input widgets
+
+
 
 # Load model
 pre_trained_model_path = "./assets/xgb_model.pkl"
@@ -224,14 +228,14 @@ with st.form("my_form"):
 
         st.bar_chart(proba_df)
 
+        if "prediction" not in st.session_state:
+            st.session_state.prediction = prediction
 
-
-
-
-    # Every form must have a submit button.
-    # if pred:
-    #     st.write("slider", slider_val, "checkbox", checkbox_val)
-
+        if "loaded_model" not in st.session_state:
+            st.session_state.loaded_model = loaded_model
+        
+        if "user_data" not in st.session_state:
+            st.session_state.user_data = df_copy
 
 
 
