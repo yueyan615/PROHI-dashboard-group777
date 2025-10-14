@@ -235,15 +235,21 @@ if option:
                     bargap=0.3,        # 控制不同组（肥胖等级）间的间距
                     bargroupgap=0.1    # 控制同组内柱子间的间距
                 )
-                # 设置文本显示位置和样式
+                
+                # Set the hover information
                 fig.update_traces(
                     textposition='outside',
-                    textfont=dict(size=10)
+                    textfont=dict(size=10),
+                    hovertemplate='<b>%{fullData.name}</b><br>' +  # 显示分类名称
+                                'Obesity Level: %{x}<br>' +        # 显示肥胖等级
+                                'Count: %{y}<br>' +                # 显示数量
+                                'Percentage: %{customdata}%<br>' + # 显示百分比
+                                '<extra></extra>',                 # 移除默认的trace box
+                    customdata=count_df_with_pct['Percentage']       # 传入百分比数据
                 )
+
                 st.plotly_chart(fig, use_container_width=True)
-                # c1, c2, c3 = st.columns([1, 6, 1])
-                # with c2:
-                #     st.plotly_chart(fig, use_container_width=True)
+ 
             with tab4:
                 ctab = pd.crosstab(plot_s, df["Obesity_level"].astype(str)).reindex(index=categories, columns=OBESITY_ORDER).fillna(0).astype(int)
                 st.dataframe(ctab, use_container_width=True, height=TABLE_H2)
