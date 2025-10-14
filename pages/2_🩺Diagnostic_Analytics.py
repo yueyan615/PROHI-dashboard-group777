@@ -49,7 +49,7 @@ This section helps users explore relationships between variables. Through correl
 """
 
 ########################### 0
-"""## A Quick Look"""
+"""## Quick Correlation Check"""
 
 container = st.container(border=True)
 with container:
