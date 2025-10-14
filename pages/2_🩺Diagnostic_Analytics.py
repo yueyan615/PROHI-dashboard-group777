@@ -53,240 +53,237 @@ This section helps users explore relationships between variables. Through correl
 st.markdown('<div id="Heatmap"></div>', unsafe_allow_html=True)
 """## Heatmap of Correlation Matrix"""
 
-# 让用户选择相关系数方法
-method = st.selectbox("**Correlation method**", ["pearson", "spearman", "kendall"], index=0)
 
-# 把所有特征编码为数值（数值保留，category->cat.codes，bool->int，其他用 factorize）
-enc = pd.DataFrame(index=df.index)
-for col in df.columns:
-    s = df[col]
-    if pd.api.types.is_numeric_dtype(s):
-        enc[col] = s
-    elif s.dtype.name == "category":
-        enc[col] = s.cat.codes
-    elif pd.api.types.is_bool_dtype(s):
-        enc[col] = s.astype(int)
-    else:
-        # object / other -> 整数编码（缺失为 -1）
-        enc[col] = pd.factorize(s, sort=False)[0]
+col1, col2 = st.columns([1, 2], gap="large")
 
-# 计算相关矩阵
-corr = enc.corr(method=method)
+# ================== correlation coefficient method select pills  ===================
+with col1:
+    option_map = {
+        0: "pearson",
+        1: "spearman",
+        2: "kendall",
+    }
+
+    method_key = st.pills(
+        "**Correlation method**",
+        options=option_map.keys(),
+        format_func=lambda option: option_map[option].capitalize(),  # 显示时首字母大写
+        selection_mode="single",
+        default=0, 
+    )
+
+    # If no option is selected, use the default value.
+    # if method_key is None:
+    #     method_key = 0
+
+    method = option_map[method_key]
+
+
+    # Add explanation
+    with st.expander("**How to choose correlation methods?**"):
+        st.markdown("""
+            - **Pearson**: Most common; measures linear relationships; sensitive to outliers.  
+            - **Spearman**: Rank-based; better for monotonic but non-linear relationships.  
+            - **Kendall**: Concordance-based; more robust but slower to compute. 
+        """)
+
+
+with col2:
+    options = df.columns.tolist()
+    selected_features = st.pills(
+        "**Feature Selection**", 
+        options, 
+        selection_mode="multi",
+        default=options)
+
+
+
+
+# ================== heatmap  ===================
+# Calculate the correlation matrix
+st.markdown("<br>", unsafe_allow_html=True)
+# st.markdown(f"### Correlation Matrix ({method.capitalize()} method)")
+corr = df[selected_features].corr(method=method)
 
 custom_scale = [
-    (0.0, "#0072b2"),   # 对应 zmin (-1)
-    (0.5, "#ffffff"),   # 对应 0
-    (1.0, "#e69f00"),   # 对应 zmax (1)
+    (0.0, "#0072b2"),   # 对应 zmin (-1) - 蓝色
+    (0.5, "#ffffff"),   # 对应 0 - 白色
+    (1.0, "#e69f00"),   # 对应 zmax (1) - 橙色
 ]
 
-fig = px.imshow(
+# Create a heatmap
+fig_heatmap = px.imshow(
     corr,
-    labels=dict(x="Feature", y="Feature", color="Correlation"),
     x=corr.columns,
-    y=corr.index,
+    y=corr.columns,
     color_continuous_scale=custom_scale,
-    zmin=-1, zmax=1,
+    zmin=-1,
+    zmax=1,
+    aspect="auto",
     text_auto=".2f",
-    title=f"Correlation matrix ({method})"
+    title=f"Correlation Matrix ({method.capitalize()} method)"
 )
 
-# 增大注释（格子内数字）字体
-fig.update_traces(textfont={"size": 10})
-
-# 放大画布并调整边距，增加整体字体（坐标轴/标题）
-fig.update_layout(
-    width=900,
-    height=700,
-    margin=dict(l=50, r=50, t=80, b=50),
-    title=dict(font=dict(size=20)),
-    font=dict(size=12)
+# Update layout - enlarge the image
+fig_heatmap.update_layout(
+    height=max(800, 35 * len(corr.columns)),  
+    width=max(800, 35 * len(corr.columns)),   
+    xaxis_title="Features",
+    yaxis_title="Features",
+    font=dict(size=12),  
+    margin=dict(l=120, r=120, t=30, b=120),  
 )
 
-# 轴标签和刻度更清晰
-fig.update_xaxes(tickangle=45, tickfont=dict(size=11))
-fig.update_yaxes(tickfont=dict(size=11))
 
-# 调整 colorbar 宽度与长度
-fig.update_coloraxes(
-    colorbar=dict(
-        thickness=20,
-        lenmode="fraction",
-        len=1.0,                  # 占满热图高度
-        tickvals=[-1, 0, 1],
-        ticktext=["-1", "0", "1"],
-        title=dict(text=""),     # 不显示标题
-        y=0.5,
-        yanchor="middle",
-        x=0.9,          
-        xanchor="left",
-        xpad=0.2
+# Display coefficient values on the heatmap
+fig_heatmap.update_traces(
+    text=np.round(corr.values, 2),  
+    texttemplate="%{text}",         
+    textfont={"size": 11, "color": "black"},  
+    hovertemplate="<b>%{x}</b> vs <b>%{y}</b><br>Correlation: %{z:.3f}<extra></extra>"
+)
+
+# Add this line to force a square ratio
+fig_heatmap.update_xaxes(scaleanchor="y", scaleratio=1)
+
+# Customize hover information
+fig_heatmap.update_traces(
+    texttemplate="%{text}",
+    textfont={"size": 8},
+    hovertemplate="<b>%{x}</b> vs <b>%{y}</b><br>Correlation: %{z:.3f}<extra></extra>"
+)
+
+# Rotate x-axis labels for better readability
+fig_heatmap.update_xaxes(tickangle=45)
+
+# Show the heatmap
+st.plotly_chart(fig_heatmap, use_container_width=True)
+
+st.divider()
+# ================== Display highly correlated feature pairs  ===================
+st.markdown("## Top 10 High Correlation Feature Pairs")
+
+# Create a mask to get the upper triangle of the correlation matrix, excluding the diagonal
+mask = np.triu(np.ones_like(corr, dtype=bool), k=1)
+corr_masked = corr.where(mask)
+
+# Extract feature pairs with high correlation
+high_corr_pairs = []
+
+for i in range(len(corr_masked.columns)):
+    for j in range(len(corr_masked.columns)):
+        if not pd.isna(corr_masked.iloc[i, j]):
+            high_corr_pairs.append({
+                'Feature 1': corr_masked.columns[i],
+                'Feature 2': corr_masked.columns[j],
+                'Correlation': corr_masked.iloc[i, j]
+            })
+
+
+# Sort by absolute value and take the top 10
+high_corr_df = pd.DataFrame(high_corr_pairs).sort_values('Correlation', key=abs, ascending=False).head(10)
+
+# Create feature pairs with labels (shorten the labels to improve readability)
+high_corr_df['Feature_Pair'] = high_corr_df.apply(
+    lambda row: f"{row['Feature 1'][:15]}{'...' if len(row['Feature 1']) > 15 else ''} ↔ {row['Feature 2'][:15]}{'...' if len(row['Feature 2']) > 15 else ''}", 
+    axis=1
+)
+
+
+# Create a horizontal bar chart
+fig_bar = px.bar(
+    high_corr_df, 
+    x='Correlation',
+    y='Feature_Pair',
+    orientation='h',
+    color='Correlation',
+    color_continuous_scale=[
+        (0.0, "#0072b2"),   
+        (0.5, "#ffffff"),     
+        (1.0, "#e69f00")    
+    ],
+    range_color=[-1, 1],
+    text=[f"{corr:.3f}" for corr in high_corr_df['Correlation']],
+    title="",
+    hover_data={
+        'Feature 1': True,
+        'Feature 2': True, 
+        'Correlation': ':.3f',
+        'Feature_Pair': False
+    }
+)
+
+# Update layout
+fig_bar.update_layout(
+    height=max(400, 40 * len(high_corr_df)),  # Adjust the height according to the amount of data
+    yaxis=dict(
+        autorange="reversed",  # Arrange from top to bottom (rank 1 at the top)
+        title="Feature Pairs",
+        tickfont=dict(size=10)
     ),
-    cmin=-1,
-    cmax=1
-)
-# 在 Streamlit 中保持自定义宽高（use_container_width=False）
-st.plotly_chart(fig, use_container_width=False)
-
-
-########################### 2
-# ...existing code...
-
-from scipy.stats import chi2_contingency
-
-# Select nominal variables (treat bool as nominal as well)
-nominal_cols = [c for c in df.columns if not pd.api.types.is_numeric_dtype(df[c])]
-if len(nominal_cols) < 2:
-    st.info("There are not enough nominal variables to plot a heatmap.")
-else:
-    def cramers_v(x, y):
-        ct = pd.crosstab(x, y)
-        if ct.size == 0:
-            return 0.0
-        chi2 = chi2_contingency(ct, correction=False)[0]
-        n = ct.to_numpy().sum()
-        r, k = ct.shape
-        denom = n * (min(r - 1, k - 1))
-        return float(0.0 if denom == 0 else np.sqrt(chi2 / denom))
-
-    n = len(nominal_cols)
-    mat = pd.DataFrame(np.zeros((n, n)), index=nominal_cols, columns=nominal_cols, dtype=float)
-
-    for i, a in enumerate(nominal_cols):
-        for j, b in enumerate(nominal_cols):
-            if i > j:
-                mat.iloc[i, j] = mat.iloc[j, i]
-                continue
-            if a == b:
-                mat.iloc[i, j] = 1.0
-                continue
-            try:
-                val = cramers_v(df[a], df[b])
-            except Exception:
-                val = 0.0
-            mat.iloc[i, j] = val
-            mat.iloc[j, i] = val
-
-    # 绘图：0..1，从白到 #46cdcf
-    custom_scale = [(0.0, custom_scale[2][1]), (1.0, custom_scale[0][1])]
-
-    fig = px.imshow(
-        mat,
-        labels=dict(x="Feature", y="Feature", color="Cramér's V"),
-        x=mat.columns,
-        y=mat.index,
-        color_continuous_scale=custom_scale,
-        zmin=0, zmax=1,
-        text_auto=".2f",
-        title="Cramér's V (nominal vs nominal)"
-    )
-
-    fig.update_traces(textfont={"size": 12})
-    fig.update_layout(
-        width=700,
-        height=600,
-        margin=dict(l=50, r=50, t=80, b=50),
-        title=dict(font=dict(size=18)),
-        font=dict(size=12)
-    )
-    fig.update_xaxes(tickangle=45, tickfont=dict(size=11))
-    fig.update_yaxes(tickfont=dict(size=11))
-    fig.update_coloraxes(
+    xaxis=dict(
+        range=[-1, 1],  # Fixed range from -1 to 1
+        title="Correlation Coefficient",
+        tickvals=[-1, -0.5, 0, 0.5, 1],
+        ticktext=['-1.0', '-0.5', '0.0', '0.5', '1.0']
+    ),
+    showlegend=False,
+    margin=dict(l=250, r=150, t=50, b=50),  
+    font=dict(size=11),
+    plot_bgcolor='rgba(0,0,0,0)',  # Transparent background
+    coloraxis_showscale=True,  # Show color scale
+    coloraxis=dict(
         colorbar=dict(
-            thickness=20,
-            lenmode="fraction",
+            title=dict(text="Correlation", font=dict(size=12)), 
+            tickfont=dict(size=10),
             len=1.0,
-            tickvals=[0, 0.5, 1],
-            ticktext=["0", "0.5", "1"],
-            title=dict(text=""),
-            y=0.5,
-            yanchor="middle",
-        ),
-        cmin=0,
-        cmax=1
+            x=1.15,
+            xanchor="left"
+        )
     )
+)
 
-    # st.plotly_chart(fig, use_container_width=False)
+# text position outside the bars and customize hover information
+fig_bar.update_traces(
+    textposition='outside',
+    textfont=dict(size=10, color='black'),
+    hovertemplate='<b>%{customdata[0]}</b> ↔ <b>%{customdata[1]}</b><br>' +
+                    'Correlation: %{x:.3f}<br>' +
+                    '<extra></extra>',
+    customdata=high_corr_df[['Feature 1', 'Feature 2']].values
+)
+
+# Add a vertical line at x=0
+fig_bar.add_vline(x=0, line_dash="dash", line_color="gray", line_width=1)
+
+# Show the chart
+col1, col2, col3 = st.columns([1, 7, 1])
+with col2:
+    st.plotly_chart(fig_bar, use_container_width=True)
+
+# Add explanation
+st.info(f"📊 Showing top 10 feature pairs ranked by absolute correlation strength. "
+        f"Blue bars indicate negative correlation, orange bars indicate positive correlation.")
 
 
-#################################### 3
 
-# st.markdown("## The association strength of each column with Obesity level")
-# st.write("methods: Cramér's V for nominal↔nominal; eta (correlation ratio) for nominal→numeric")
-# target = "Obesity_level"
-# if target not in df.columns:
-#     st.error(f"{target} not found")
-# else:
-#     # 辅助：Cramér's V（名义-名义）
-#     def cramers_v(x, y):
-#         ct = pd.crosstab(x.fillna("##NA##"), y.fillna("##NA##"))
-#         if ct.size == 0:
-#             return 0.0
-#         chi2 = chi2_contingency(ct, correction=False)[0]
-#         n = ct.to_numpy().sum()
-#         r, k = ct.shape
-#         denom = n * (min(r - 1, k - 1))
-#         return float(0.0 if denom == 0 else np.sqrt(chi2 / denom))
 
-#     # 辅助：correlation ratio / eta（名义目标 - 数值特征）
-#     def correlation_ratio(categories, measurements):
-#         cat = np.asarray(categories)
-#         meas = np.asarray(measurements, dtype=float)
-#         mask = ~pd.isnull(cat) & ~pd.isnull(meas)
-#         if mask.sum() == 0:
-#             return 0.0
-#         cat = cat[mask]
-#         meas = meas[mask]
-#         groups = {}
-#         for c, m in zip(cat, meas):
-#             groups.setdefault(c, []).append(m)
-#         grand_mean = meas.mean()
-#         ss_between = sum(len(v) * (np.mean(v) - grand_mean) ** 2 for v in groups.values())
-#         ss_total = ((meas - grand_mean) ** 2).sum()
-#         return float(0.0 if ss_total == 0 else ss_between / ss_total)
+st.divider()
+# ================== Summary of Correlation Statistics  ===================
+st.markdown("## Correlation Summary")
+col1, col2, col3, col4 = st.columns(4)
 
-#     rows = []
-#     for col in df.columns:
-#         if col == target:
-#             continue
-#         s = df[col]
-#         # 将布尔视为名义
-#         if pd.api.types.is_numeric_dtype(s):
-#             # 数值特征：用 correlation ratio（Obesity_level 为分组）
-#             val = correlation_ratio(df[target].astype(str), s)
-#             method = "eta (nominal→numeric)"
-#         else:
-#             # 名义特征（包括 bool/object/category）：用 Cramér's V
-#             val = cramers_v(df[col].astype(str), df[target].astype(str))
-#             method = "Cramér's V (nominal↔nominal)"
-#         rows.append({"Feature": col, "Association": float(val), "Method": method})
+with col1:
+    st.metric("Max Positive Correlation", f"{corr_masked.max().max():.3f}")
 
-#     assoc_df = pd.DataFrame(rows).sort_values("Association", ascending=False).reset_index(drop=True)
+with col2:
+    st.metric("Max Negative Correlation", f"{corr_masked.min().min():.3f}")
 
-#     # 显示表格（前 50）
-#     st.subheader("Sorted by the strength of association with Obesity_level (0-1)")
-#     st.dataframe(assoc_df, use_container_width=True)
+with col3:
+    avg_corr = corr_masked.abs().mean().mean()
+    st.metric("Average |Correlation|", f"{avg_corr:.3f}")
 
-#     # 绘图：条形图
-#     fig_assoc = px.bar(
-#         assoc_df,
-#         x="Association",
-#         y="Feature",
-#         orientation="h",
-#         color="Method",
-#         color_discrete_map={
-#             "Cramér's V (nominal↔nominal)": "#46cdcf",
-#             "eta (nominal→numeric)": "#cf4846"
-#         },
-#         hover_data={"Association": ":.3f"},
-#         title="Feature vs Obesity_level — Association strength",
-#         text=assoc_df["Association"].map(lambda v: f"{v:.2f}")
-#     )
-#     fig_assoc.update_layout(
-#         height= max(400, 40 * len(assoc_df)), 
-#         margin=dict(l=300, r=50, t=60, b=50),
-#         yaxis=dict(autorange="reversed"),
-#         showlegend=True
-#     )
-#     fig_assoc.update_traces(textposition="outside", textfont=dict(size=11))
-#     st.plotly_chart(fig_assoc, use_container_width=False)
+with col4:
+    high_corr_count = (corr_masked.abs() >= 0.5).sum().sum()
+    st.metric("High Corr Pairs (≥0.5)", high_corr_count)
 
