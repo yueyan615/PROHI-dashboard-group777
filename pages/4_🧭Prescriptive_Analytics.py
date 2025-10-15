@@ -48,12 +48,12 @@ if "prediction" in st.session_state and "loaded_model" in st.session_state and "
     user_data = st.session_state.user_data
     explainer = shap.TreeExplainer(loaded_model)
     shap_values = explainer.shap_values(user_data)
-    st.write("### SHAP Summary Plot")
+    st.write("## SHAP Summary Plot")
     fig, ax = plt.subplots()
     shap.summary_plot(shap_values, user_data, show=False, plot_type="bar")
     st.pyplot(fig)
 
-    st.write("### SHAP Force Plot")
+    st.write("## SHAP Force Plot")
     ## st.pyplot(shap.plots.force(explainer.expected_value[prediction[0]], shap_values[:, :, prediction[0]], user_data.iloc[0, :] ,matplotlib=True))
     st_shap(shap.force_plot(explainer.expected_value[prediction[0]], shap_values[:, :, prediction[0]], user_data.iloc[0, :]), height=200, width=1000)
 
@@ -73,8 +73,4 @@ else:
 
 ########################### 1
 
-""" Sources: 
-1. https://shap.readthedocs.io/en/latest/example_notebooks/tabular_examples/model_agnostic/Multioutput%20Regression%20SHAP.html
-2. https://github.com/snehankekre/streamlit-shap/blob/main/README.md
-"""
 

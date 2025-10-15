@@ -174,7 +174,7 @@ if pred:
                             })
     
     # after submit show the user data
-    st.write("## Your input:")
+    st.write("## Your Input:")
     st.dataframe(user_data)
 
     # Convert categorical variables to numerical using the method from prediction
@@ -227,10 +227,61 @@ if pred:
     #show the probability for each class
     prediction_proba = loaded_model.predict_proba(df_copy)
     proba_df = pd.DataFrame(prediction_proba, columns=[obesity_levels[i] for i in range(len(obesity_levels))])
-    st.write("## Prediction Probabilities for each class:")
-    # Display the probabilities as a bar chart in ordered from lowest to highest
+    st.write("## Prediction Probabilities For Each Obesity Level:")
+ 
+    import plotly.express as px
 
-    st.bar_chart(proba_df.T, horizontal=True, color="#0072b2")
+    # 定义配色
+    PALETTE = ["#0072b2","#e69f00","#009e73","#cc79a7","#f0e442","#d55e00","#56b4e9"]
+
+
+    # 准备饼图数据
+    proba_pct = (proba_df * 100).round(2)  # 转换为百分比
+    proba_data = proba_pct.T.reset_index()
+    proba_data.columns = ['Obesity Level', 'Probability']
+
+    # 确保颜色映射正确
+    color_mapping = {}
+    for i, level in enumerate(['Insufficient Weight', 'Normal Weight', 'Overweight Level I', 
+                            'Overweight Level II', 'Obesity Type I', 'Obesity Type II', 
+                            'Obesity Type III']):
+        color_mapping[level] = PALETTE[i]
+
+    # 创建饼图
+    fig = px.pie(
+        proba_data, 
+        values='Probability', 
+        names='Obesity Level',
+        color='Obesity Level',  # 使用颜色映射
+        color_discrete_map=color_mapping,  # 使用自定义颜色映射
+        category_orders={'Obesity Level': ['Insufficient Weight', 'Normal Weight', 'Overweight Level I', 
+                                        'Overweight Level II', 'Obesity Type I', 'Obesity Type II', 
+                                        'Obesity Type III']}  # 确保顺序
+    )
+
+
+
+    # 自定义饼图样式 - 标签显示在外部
+    fig.update_traces(
+        textposition='outside',  # 标签显示在扇形外部
+        textinfo='percent',  # 显示标签名称和百分比
+        textfont_size=12,
+        hovertemplate='<b>%{label}</b><br>' +
+                    'Probability: %{value:.2f}%<br>' +
+                    '<extra></extra>',
+        marker=dict(
+            line=dict(color='white', width=0.5)  # 扇形边框
+        )
+    )
+
+    # 调整布局 - 为外部标签留出空间
+    fig.update_layout(
+        height=400,
+        showlegend=True,  # 关闭图例，因为标签已经在外部显示
+        margin=dict(l=80, r=80, t=80, b=50),  # 增加各边距为外部标签留空间
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
 
     
     st.session_state.prediction = prediction
