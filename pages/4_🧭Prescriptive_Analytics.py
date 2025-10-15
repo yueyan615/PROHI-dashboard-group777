@@ -77,7 +77,7 @@ if "prediction" in st.session_state and "loaded_model" in st.session_state and "
     st_shap(shap.force_plot(explainer.expected_value[prediction[0]], shap_values[:, :, prediction[0]], user_data.iloc[0, :]), height=200, width=1000)
 
 else:
-    st.info("Fill in your data in the Predictive Analytics section first, then navigate back here to see the explanations.")
+    st.warning("Fill in your data in the Predictive Analytics section first, then navigate back here to see the explanations.")
 
          
 
