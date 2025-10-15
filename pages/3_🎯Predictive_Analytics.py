@@ -97,7 +97,7 @@ with st.form("my_form"):
     age = st.number_input(
         "Age (year)",
         placeholder="Type a number...",
-        value=None,
+        value=18,
         min_value=18,
         max_value=100,
         format="%i"   # Do not force a fixed number of decimal places; display according to the actual significant digits.
@@ -223,13 +223,24 @@ with st.form("my_form"):
         st.write("### Prediction Result:")
         st.write(f"The predicted obesity level with probability for the given input data is : **{obesity_levels[prediction[0]]}**")
 
+        """
+        Obesity levels:\n
+            0: Insufficient Weight \n
+            1: Normal Weight \n
+            2: Overweight Level I \n
+            3: Overweight Level II \n
+            4: Obesity Type I \n
+            5: Obesity Type II \n
+            6: Obesity Type III \n
+        """
+
         #show the probability for each class
         prediction_proba = loaded_model.predict_proba(df_copy)
         proba_df = pd.DataFrame(prediction_proba, columns=[obesity_levels[i] for i in range(len(obesity_levels))])
         st.write("### Prediction Probabilities for each class:")
         # Display the probabilities as a bar chart in ordered from lowest to highest
 
-        st.bar_chart(proba_df)
+        st.bar_chart(proba_df.T)
 
         
         st.session_state.prediction = prediction
