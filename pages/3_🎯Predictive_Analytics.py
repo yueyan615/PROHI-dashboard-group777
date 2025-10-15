@@ -174,7 +174,7 @@ if pred:
                             })
     
     # after submit show the user data
-    st.write("### Your input:")
+    st.write("## Your input:")
     st.dataframe(user_data)
 
     # Convert categorical variables to numerical using the method from prediction
@@ -220,14 +220,14 @@ if pred:
     }
     
     # Show the prediction
-    st.write("### Prediction Result:")
+    st.write("## Prediction Result:")
     st.write(f"The predicted obesity level with probability for the given input data is : **{obesity_levels[prediction[0]]}**")
 
 
     #show the probability for each class
     prediction_proba = loaded_model.predict_proba(df_copy)
     proba_df = pd.DataFrame(prediction_proba, columns=[obesity_levels[i] for i in range(len(obesity_levels))])
-    st.write("### Prediction Probabilities for each class:")
+    st.write("## Prediction Probabilities for each class:")
     # Display the probabilities as a bar chart in ordered from lowest to highest
 
     st.bar_chart(proba_df.T, horizontal=True, color="#0072b2")
