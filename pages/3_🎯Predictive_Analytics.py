@@ -210,29 +210,19 @@ with st.form("my_form"):
         prediction = loaded_model.predict(df_copy)
 
         obesity_levels = {
-            0: 'Insufficient Weight',
-            1: 'Normal Weight',
-            2: 'Overweight Level I',
-            3: 'Overweight Level II',
-            4: 'Obesity Type I',
-            5: 'Obesity Type II',
-            6: 'Obesity Type III'
+            0: '0: Insufficient Weight',
+            1: '1: Normal Weight',
+            2: '2: Overweight Level I',
+            3: '3: Overweight Level II',
+            4: '4: Obesity Type I',
+            5: '5: Obesity Type II',
+            6: '6: Obesity Type III'
         }
         
         # Show the prediction
         st.write("### Prediction Result:")
         st.write(f"The predicted obesity level with probability for the given input data is : **{obesity_levels[prediction[0]]}**")
 
-        """
-        Obesity levels:\n
-            0: Insufficient Weight \n
-            1: Normal Weight \n
-            2: Overweight Level I \n
-            3: Overweight Level II \n
-            4: Obesity Type I \n
-            5: Obesity Type II \n
-            6: Obesity Type III \n
-        """
 
         #show the probability for each class
         prediction_proba = loaded_model.predict_proba(df_copy)
@@ -240,7 +230,7 @@ with st.form("my_form"):
         st.write("### Prediction Probabilities for each class:")
         # Display the probabilities as a bar chart in ordered from lowest to highest
 
-        st.bar_chart(proba_df.T)
+        st.bar_chart(proba_df.T, horizontal=True)
 
         
         st.session_state.prediction = prediction
