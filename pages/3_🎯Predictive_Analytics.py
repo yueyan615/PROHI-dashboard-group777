@@ -21,12 +21,28 @@ df = pd.read_parquet(file_name)
 img1 = './img/logo.svg'
 st.logo(img1, size= "large", icon_image=None)  
 
-# st.sidebar.caption("© 2025 Group 777 | Project Management and Tools for Health Informatics (PROHI)")
+### Navigation on the page
+st.sidebar.write("<br>", unsafe_allow_html=True)
+def scroll_to(element_id: str):
+    components.html(
+        f"""
+        <script>
+        const t = window.parent.document.getElementById("{element_id}");
+        if (t) t.scrollIntoView({{behavior: "smooth", block: "start"}});
+        </script>
+        """,
+        height=0,
+    )
+
+with st.sidebar:
+    sec = st.radio("Navigate on the page", ["Predictive Analytics","Input Your Data Here"], index=0)
+    mapping = {"Predictive Analytics": "Predictive Analytics", "Input Your Data Here": "Input Your Data Here"}
+    scroll_to(mapping[sec])
 
 
 
 ############################ MAIN BODY
-
+st.markdown('<div id="Predictive Analytics"></div>', unsafe_allow_html=True)
 """ # Predictive Analytics"""
 """
 This section allows users to input new data and obtain predictions on obesity levels using a pre-trained machine learning model. The dashboard focuses on making predictions rather than training models.
@@ -35,48 +51,8 @@ This section allows users to input new data and obtain predictions on obesity le
 
 
 ########################### 1
+st.markdown('<div id="Input Your Data Here"></div>', unsafe_allow_html=True)
 """## Input Your Data Here"""
-
-# """
-# ⚠️ Add here some predictive analytics with Widgets and Plots
-# """
-
-# st.write("# Example of model prediction")
-
-# # Load model
-# pre_trained_model_path = "./assets/trained_model.pickle"
-# loaded_model = None # This will be replaced by the trained model in the pickle 
-
-# with open(pre_trained_model_path, "rb") as readFile:
-#     loaded_model = pickle.load(readFile)
-
-
-# # COLUMNS
-# left_column, right_column = st.columns(2)
-
-# user_data = []
-# # Call Streamlit functions inside a "with" block to keep it in a column:
-# with left_column:
-#     length = st.slider("Sepal Length", min_value=4.0, max_value=9.0, value = 5.0)
-# with right_column:
-#     width = st.slider("Sepal Width", min_value=1.5, max_value=4.0, value = 3.0)
-
-# if st.button('Predict!'):
-#     user_data = [[length, width]]
-#     prediction = loaded_model.predict(user_data)
-#     st.write(f"The predicted value for data {user_data} is {prediction}")
-
-# """
-# # 
-# ⚠️ Add some visualizations to help understanding what the predictions mean...
-# """
-
-##############################################################################
-
-
-### Example of input widgets
-
-
 
 # Load model
 pre_trained_model_path = "./assets/xgb_model.pkl"
@@ -156,6 +132,8 @@ with st.form("my_form"):
     #now we need to convert the inputs into the format that the model expects
     # Create a DataFrame with the user input
     pred = st.form_submit_button("Predict🎯")
+
+    
 if pred:
     user_data = pd.DataFrame({"Gender": [gender],
                             "Age": [age],
@@ -174,7 +152,7 @@ if pred:
                             })
     
     # after submit show the user data
-    st.write("## Your input:")
+    st.write("### Your input")
     st.dataframe(user_data)
 
     # Convert categorical variables to numerical using the method from prediction
@@ -220,14 +198,14 @@ if pred:
     }
     
     # Show the prediction
-    st.write("## Prediction Result:")
+    st.write("### Prediction Result")
     st.write(f"The predicted obesity level with probability for the given input data is : **{obesity_levels[prediction[0]]}**")
 
 
     #show the probability for each class
     prediction_proba = loaded_model.predict_proba(df_copy)
     proba_df = pd.DataFrame(prediction_proba, columns=[obesity_levels[i] for i in range(len(obesity_levels))])
-    st.write("## Prediction Probabilities for each class:")
+    st.write("### Prediction Probabilities for each class:")
     # Display the probabilities as a bar chart in ordered from lowest to highest
 
     st.bar_chart(proba_df.T, horizontal=True, color="#0072b2")

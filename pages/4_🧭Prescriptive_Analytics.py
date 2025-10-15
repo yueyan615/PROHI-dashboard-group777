@@ -24,11 +24,27 @@ df = pd.read_parquet(file_name)
 img1 = './img/logo.svg'
 st.logo(img1, size= "large", icon_image=None)  
 
-# st.sidebar.caption("© 2025 Group 777 | Project Management and Tools for Health Informatics (PROHI)")
+### Navigation on the page
+st.sidebar.write("<br>", unsafe_allow_html=True)
+def scroll_to(element_id: str):
+    components.html(
+        f"""
+        <script>
+        const t = window.parent.document.getElementById("{element_id}");
+        if (t) t.scrollIntoView({{behavior: "smooth", block: "start"}});
+        </script>
+        """,
+        height=0,
+    )
 
+with st.sidebar:
+    sec = st.radio("Navigate on the page", ["Prescriptive Analytics","SHAP Summary Plot", "SHAP Force Plot"], index=0)
+    mapping = {"Prescriptive Analytics": "Prescriptive Analytics", "SHAP Summary Plot": "SHAP Summary Plot", "SHAP Force Plot": "SHAP Force Plot"}
+    scroll_to(mapping[sec])
 
 
 ############################ MAIN BODY
+st.markdown('<div id="Prescriptive Analytics"></div>', unsafe_allow_html=True)
 """ # Prescriptive Analytics"""
 
 """
@@ -48,24 +64,21 @@ if "prediction" in st.session_state and "loaded_model" in st.session_state and "
     user_data = st.session_state.user_data
     explainer = shap.TreeExplainer(loaded_model)
     shap_values = explainer.shap_values(user_data)
+
+    st.markdown('<div id="SHAP Summary Plot"></div>', unsafe_allow_html=True)
     st.write("## SHAP Summary Plot")
     fig, ax = plt.subplots()
     shap.summary_plot(shap_values, user_data, show=False, plot_type="bar")
     st.pyplot(fig)
 
+    st.markdown('<div id="SHAP Force Plot"></div>', unsafe_allow_html=True)
     st.write("## SHAP Force Plot")
     ## st.pyplot(shap.plots.force(explainer.expected_value[prediction[0]], shap_values[:, :, prediction[0]], user_data.iloc[0, :] ,matplotlib=True))
     st_shap(shap.force_plot(explainer.expected_value[prediction[0]], shap_values[:, :, prediction[0]], user_data.iloc[0, :]), height=200, width=1000)
 
-
-
-
-
-
 else:
-    """
-        Fill in your data in the Predictive Analytics section first, then navigate back here to see the explanations.
-    """
+    st.info("Fill in your data in the Predictive Analytics section first, then navigate back here to see the explanations.")
+
          
 
 
