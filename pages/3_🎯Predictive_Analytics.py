@@ -156,90 +156,90 @@ with st.form("my_form"):
     #now we need to convert the inputs into the format that the model expects
     # Create a DataFrame with the user input
     pred = st.form_submit_button("Predict🎯")
-    if pred:
-        user_data = pd.DataFrame({"Gender": [gender],
-                                "Age": [age],
-                                "Family_history_overweight": [fam_hist],
-                                "High_caloric_food": [high_cal],
-                                "Veggie_consumption_freq": [vegie],
-                                "Main_meals_count": [meals],
-                                "Food_between_meals_freq": [snacks],
-                                "Smokes": [smoke],
-                                "Water_consumption": [water],
-                                "Monitors_calories": [monitor],
-                                "Physical_activity": [pysical],
-                                "Screen_time": [screen],
-                                "Alcohol_consumption_freq": [alcohol],
-                                "Transportation_mode": [transport]
-                                })
-        
-        # after submit show the user data
-        st.write("### Your input:")
-        st.dataframe(user_data)
+if pred:
+    user_data = pd.DataFrame({"Gender": [gender],
+                            "Age": [age],
+                            "Family_history_overweight": [fam_hist],
+                            "High_caloric_food": [high_cal],
+                            "Veggie_consumption_freq": [vegie],
+                            "Main_meals_count": [meals],
+                            "Food_between_meals_freq": [snacks],
+                            "Smokes": [smoke],
+                            "Water_consumption": [water],
+                            "Monitors_calories": [monitor],
+                            "Physical_activity": [pysical],
+                            "Screen_time": [screen],
+                            "Alcohol_consumption_freq": [alcohol],
+                            "Transportation_mode": [transport]
+                            })
+    
+    # after submit show the user data
+    st.write("### Your input:")
+    st.dataframe(user_data)
 
-        # Convert categorical variables to numerical using the method from prediction
-        def preprocess_input(X):
-            # Gender   
-            X['Gender'] = X['Gender'].map({'Male': 1, 'Female': 0})
-            X["Family_history_overweight"] = X["Family_history_overweight"].map({'Yes': 1, 'No': 0})
+    # Convert categorical variables to numerical using the method from prediction
+    def preprocess_input(X):
+        # Gender   
+        X['Gender'] = X['Gender'].map({'Male': 1, 'Female': 0})
+        X["Family_history_overweight"] = X["Family_history_overweight"].map({'Yes': 1, 'No': 0})
 
-            X["High_caloric_food"] = X["High_caloric_food"].map({'Yes': 1, 'No': 0})
-            X["Smokes"] = X["Smokes"].map({'Yes': 1, 'No': 0})
-            X["Monitors_calories"] = X["Monitors_calories"].map({'Yes': 1, 'No': 0})
+        X["High_caloric_food"] = X["High_caloric_food"].map({'Yes': 1, 'No': 0})
+        X["Smokes"] = X["Smokes"].map({'Yes': 1, 'No': 0})
+        X["Monitors_calories"] = X["Monitors_calories"].map({'Yes': 1, 'No': 0})
 
-            X["Alcohol_consumption_freq"] = X["Alcohol_consumption_freq"].map({"Sometimes": 1, "Frequently": 2, "I do not drink": 0, "Always": 3})
+        X["Alcohol_consumption_freq"] = X["Alcohol_consumption_freq"].map({"Sometimes": 1, "Frequently": 2, "I do not drink": 0, "Always": 3})
 
-            X["Physical_activity"] = X["Physical_activity"].map({"I do not": 0, "1 or 2 days": 2, "2 or 4 days": 3, "4 or 5 days": 4})
+        X["Physical_activity"] = X["Physical_activity"].map({"I do not": 0, "1 or 2 days": 2, "2 or 4 days": 3, "4 or 5 days": 4})
 
-            X["Veggie_consumption_freq"] = X["Veggie_consumption_freq"].map({"Sometimes": 1, "Frequently": 2, "Never": 0, "Always": 3})
+        X["Veggie_consumption_freq"] = X["Veggie_consumption_freq"].map({"Sometimes": 1, "Frequently": 2, "Never": 0, "Always": 3})
 
-            X["Main_meals_count"] = X["Main_meals_count"].map({"Between 1 and 2": 0, "Three" : 1, "More than three": 2})
+        X["Main_meals_count"] = X["Main_meals_count"].map({"Between 1 and 2": 0, "Three" : 1, "More than three": 2})
 
-            X["Food_between_meals_freq"] = X["Food_between_meals_freq"].map({"Sometimes": 1, "Frequently": 2, "No": 0, "Always": 3})
+        X["Food_between_meals_freq"] = X["Food_between_meals_freq"].map({"Sometimes": 1, "Frequently": 2, "No": 0, "Always": 3})
 
-            X["Water_consumption"] = X["Water_consumption"].map({"Less than a liter": 0, "Between 1 and 2 L": 1, "More than 2 L": 2})
+        X["Water_consumption"] = X["Water_consumption"].map({"Less than a liter": 0, "Between 1 and 2 L": 1, "More than 2 L": 2})
 
-            X["Screen_time"] = X["Screen_time"].map({"0-2 hours": 0, "3-5 hours": 1, "More than 5 hours": 2})
+        X["Screen_time"] = X["Screen_time"].map({"0-2 hours": 0, "3-5 hours": 1, "More than 5 hours": 2})
 
-            X["Transportation_mode"] = X["Transportation_mode"].map({"Automobile": 5, "Public_Transportation": 4, "Motorbike": 3, "Bike": 2, "Walking": 1})
+        X["Transportation_mode"] = X["Transportation_mode"].map({"Automobile": 5, "Public_Transportation": 4, "Motorbike": 3, "Bike": 2, "Walking": 1})
 
-            return X
+        return X
 
-        df_copy = preprocess_input(user_data.copy())
+    df_copy = preprocess_input(user_data.copy())
 
-        prediction = loaded_model.predict(df_copy)
+    prediction = loaded_model.predict(df_copy)
 
-        obesity_levels = {
-            0: '0: Insufficient Weight',
-            1: '1: Normal Weight',
-            2: '2: Overweight Level I',
-            3: '3: Overweight Level II',
-            4: '4: Obesity Type I',
-            5: '5: Obesity Type II',
-            6: '6: Obesity Type III'
-        }
-        
-        # Show the prediction
-        st.write("### Prediction Result:")
-        st.write(f"The predicted obesity level with probability for the given input data is : **{obesity_levels[prediction[0]]}**")
+    obesity_levels = {
+        0: '0: Insufficient Weight',
+        1: '1: Normal Weight',
+        2: '2: Overweight Level I',
+        3: '3: Overweight Level II',
+        4: '4: Obesity Type I',
+        5: '5: Obesity Type II',
+        6: '6: Obesity Type III'
+    }
+    
+    # Show the prediction
+    st.write("### Prediction Result:")
+    st.write(f"The predicted obesity level with probability for the given input data is : **{obesity_levels[prediction[0]]}**")
 
 
-        #show the probability for each class
-        prediction_proba = loaded_model.predict_proba(df_copy)
-        proba_df = pd.DataFrame(prediction_proba, columns=[obesity_levels[i] for i in range(len(obesity_levels))])
-        st.write("### Prediction Probabilities for each class:")
-        # Display the probabilities as a bar chart in ordered from lowest to highest
+    #show the probability for each class
+    prediction_proba = loaded_model.predict_proba(df_copy)
+    proba_df = pd.DataFrame(prediction_proba, columns=[obesity_levels[i] for i in range(len(obesity_levels))])
+    st.write("### Prediction Probabilities for each class:")
+    # Display the probabilities as a bar chart in ordered from lowest to highest
 
-        st.bar_chart(proba_df.T, horizontal=True, color="#0072b2")
+    st.bar_chart(proba_df.T, horizontal=True, color="#0072b2")
 
-        
-        st.session_state.prediction = prediction
+    
+    st.session_state.prediction = prediction
 
-        
-        st.session_state.loaded_model = loaded_model
-        
-        
-        st.session_state.user_data = df_copy
+    
+    st.session_state.loaded_model = loaded_model
+    
+    
+    st.session_state.user_data = df_copy
 
 
 
