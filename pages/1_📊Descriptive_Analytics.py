@@ -57,7 +57,7 @@ def categorical_setup(series: pd.Series):
 img1 = './img/logo.svg'
 st.logo(img1, size= "large", icon_image=None)  
 
-
+### Navigation on the page
 st.sidebar.write("<br>", unsafe_allow_html=True)
 def scroll_to(element_id: str):
     components.html(
