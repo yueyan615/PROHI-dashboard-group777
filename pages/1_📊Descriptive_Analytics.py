@@ -252,124 +252,124 @@ if option:
             with tab4:
                 ctab = pd.crosstab(plot_s, df["Obesity_level"].astype(str)).reindex(index=categories, columns=OBESITY_ORDER).fillna(0).astype(int)
                 st.dataframe(ctab, use_container_width=True, height=TABLE_H2)
-        st.divider()
+            st.divider()
 ############################# 2.3 Each Category's Obesity Level Distribution Pie Charts #############################
-        st.markdown(f"#### Obesity Level Distribution for each {option} Category")
-        # Pie chart 1: Show the obesity level distribution for each category
-        # First row: first 4
-        legend_cols_1 = st.columns(4)
-        for i in range(4):
-            if i < len(OBESITY_ORDER):
-                obesity_level = OBESITY_ORDER[i]
-                with legend_cols_1[i]:
-                    color = PALETTE[i % len(PALETTE)]
-                    st.markdown(
-                        f'<div style="display: flex; align-items: center; margin-bottom: 5px;">'
-                        f'<div style="width: 12px; height: 12px; background-color: {color}; margin-right: 6px; border-radius: 2px;"></div>'
-                        f'<span style="font-size: 11px;">{obesity_level}</span>'
-                        f'</div>',
-                        unsafe_allow_html=True
-                    )
+            st.markdown(f"#### Obesity Level Distribution for each {option} Category")
+            # Pie chart 1: Show the obesity level distribution for each category
+            # First row: first 4
+            legend_cols_1 = st.columns(4)
+            for i in range(4):
+                if i < len(OBESITY_ORDER):
+                    obesity_level = OBESITY_ORDER[i]
+                    with legend_cols_1[i]:
+                        color = PALETTE[i % len(PALETTE)]
+                        st.markdown(
+                            f'<div style="display: flex; align-items: center; margin-bottom: 5px;">'
+                            f'<div style="width: 12px; height: 12px; background-color: {color}; margin-right: 6px; border-radius: 2px;"></div>'
+                            f'<span style="font-size: 11px;">{obesity_level}</span>'
+                            f'</div>',
+                            unsafe_allow_html=True
+                        )
 
-        # Second row: last 3
-        legend_cols_2 = st.columns([1, 1, 1, 1])  # 4 columns but only use the first 3 to keep it centered
-        for i in range(3):
-            idx = i + 4
-            if idx < len(OBESITY_ORDER):
-                obesity_level = OBESITY_ORDER[idx]
-                with legend_cols_2[i]:
-                    color = PALETTE[idx % len(PALETTE)]
-                    st.markdown(
-                        f'<div style="display: flex; align-items: center; margin-bottom: 5px;">'
-                        f'<div style="width: 12px; height: 12px; background-color: {color}; margin-right: 6px; border-radius: 2px;"></div>'
-                        f'<span style="font-size: 11px;">{obesity_level}</span>'
-                        f'</div>',
-                        unsafe_allow_html=True
-                    )
+            # Second row: last 3
+            legend_cols_2 = st.columns([1, 1, 1, 1])  # 4 columns but only use the first 3 to keep it centered
+            for i in range(3):
+                idx = i + 4
+                if idx < len(OBESITY_ORDER):
+                    obesity_level = OBESITY_ORDER[idx]
+                    with legend_cols_2[i]:
+                        color = PALETTE[idx % len(PALETTE)]
+                        st.markdown(
+                            f'<div style="display: flex; align-items: center; margin-bottom: 5px;">'
+                            f'<div style="width: 12px; height: 12px; background-color: {color}; margin-right: 6px; border-radius: 2px;"></div>'
+                            f'<span style="font-size: 11px;">{obesity_level}</span>'
+                            f'</div>',
+                            unsafe_allow_html=True
+                        )
 
-        # Add spacing
-        st.write("")
+            # Add spacing
+            st.write("")
 
-        # Draw pie charts for each category separately
-        num_categories = len(categories)
-        cols_per_row = min(3, num_categories)  # A maximum of 3 pie charts per line
-        
-        for i, category in enumerate(categories):
-            if i % cols_per_row == 0:
-                # Create a new row and add spacing between each row
-                if i > 0:
-                    st.write("")  # Add spacing
-                pie_cols = st.columns(cols_per_row, gap="medium")  # Add column spacing
-
-            # Current category's obesity level distribution
-            category_data = count_df[count_df[col] == category]
+            # Draw pie charts for each category separately
+            num_categories = len(categories)
+            cols_per_row = min(3, num_categories)  # A maximum of 3 pie charts per line
             
-            with pie_cols[i % cols_per_row]:
-                if not category_data.empty:
-                    fig_cat_pie = px.pie(
-                        category_data,
-                        names='Obesity_level',
-                        values='Count',
-                        title=f"{category}",
-                        category_orders={'Obesity_level': OBESITY_ORDER},
-                        color='Obesity_level',
-                        color_discrete_map={lvl: PALETTE[i % len(PALETTE)] for i, lvl in enumerate(OBESITY_ORDER)},
-                    )
-                    # Add percentage and count labels to the pie chart
-                    fig_cat_pie.update_traces(
-                        texttemplate='%{value}<br>(%{percent})',  # Show count and percentage
-                        textposition='inside',
-                        textfont_size=10,
-                        hovertemplate='<b>%{label}</b><br>' +      # Show obesity level name
-                                    'Count: %{value}<br>' +       # Show count
-                                    'Percentage: %{percent}<br>' +# Show percentage
-                                    '<extra></extra>'             # Remove default trace box
-                    )
-                    fig_cat_pie.update_layout(
-                        height=240,
-                        showlegend=False,  # Each pie chart does not show legend, using shared legend
-                        title_font_size=16,
-                        # title_x=0.4,
-                        margin=dict(t=35, b=15, l=15, r=15)
-                    )
-                    st.plotly_chart(fig_cat_pie, use_container_width=True)
-                else:
-                    st.write(f"No data for {category}")
-        
+            for i, category in enumerate(categories):
+                if i % cols_per_row == 0:
+                    # Create a new row and add spacing between each row
+                    if i > 0:
+                        st.write("")  # Add spacing
+                    pie_cols = st.columns(cols_per_row, gap="medium")  # Add column spacing
+
+                # Current category's obesity level distribution
+                category_data = count_df[count_df[col] == category]
+                
+                with pie_cols[i % cols_per_row]:
+                    if not category_data.empty:
+                        fig_cat_pie = px.pie(
+                            category_data,
+                            names='Obesity_level',
+                            values='Count',
+                            title=f"{category}",
+                            category_orders={'Obesity_level': OBESITY_ORDER},
+                            color='Obesity_level',
+                            color_discrete_map={lvl: PALETTE[i % len(PALETTE)] for i, lvl in enumerate(OBESITY_ORDER)},
+                        )
+                        # Add percentage and count labels to the pie chart
+                        fig_cat_pie.update_traces(
+                            texttemplate='%{value}<br>(%{percent})',  # Show count and percentage
+                            textposition='inside',
+                            textfont_size=10,
+                            hovertemplate='<b>%{label}</b><br>' +      # Show obesity level name
+                                        'Count: %{value}<br>' +       # Show count
+                                        'Percentage: %{percent}<br>' +# Show percentage
+                                        '<extra></extra>'             # Remove default trace box
+                        )
+                        fig_cat_pie.update_layout(
+                            height=240,
+                            showlegend=False,  # Each pie chart does not show legend, using shared legend
+                            title_font_size=16,
+                            # title_x=0.4,
+                            margin=dict(t=35, b=15, l=15, r=15)
+                        )
+                        st.plotly_chart(fig_cat_pie, use_container_width=True)
+                    else:
+                        st.write(f"No data for {category}")
+            
 
 
 ############################## 2.4 BMI Distribution by Each Category ##############################
-        st.divider()
-        # Box plot 2: Show the BMI distribution for each category of the option
-        st.markdown(f"#### BMI Distribution for each {option} Category")
-        
-        fig_box = px.box(
-            df,
-            x=col,
-            y='BMI',
-            category_orders={col: categories},
-            color=col,
-            color_discrete_map=color_map,
-        )
-        fig_box.update_layout(
-            height=400,
-            title="",
-            title_font_size=14,
-            legend_title_text="",
-            margin=dict(t=50, b=50, l=50, r=50)
-        )
+            st.divider()
+            # Box plot 2: Show the BMI distribution for each category of the option
+            st.markdown(f"#### BMI Distribution for each {option} Category")
+            
+            fig_box = px.box(
+                df,
+                x=col,
+                y='BMI',
+                category_orders={col: categories},
+                color=col,
+                color_discrete_map=color_map,
+            )
+            fig_box.update_layout(
+                height=400,
+                title="",
+                title_font_size=14,
+                legend_title_text="",
+                margin=dict(t=50, b=50, l=50, r=50)
+            )
 
-        c1, c2 = st.columns([1, 3], gap="large")
-        with c1:
-            st.markdown("<br><b></b>", unsafe_allow_html=True)
+            c1, c2 = st.columns([1, 3], gap="large")
+            with c1:
+                st.markdown("<br><b></b>", unsafe_allow_html=True)
 
-            st.write("**Mean BMI for each category**")
-            for category in categories:
-                mean_bmi = df[df[col] == category]['BMI'].mean()
-                st.write(f"- {category}: {mean_bmi:.2f}")
+                st.write("**Mean BMI for each category**")
+                for category in categories:
+                    mean_bmi = df[df[col] == category]['BMI'].mean()
+                    st.write(f"- {category}: {mean_bmi:.2f}")
 
-        with c2:
-            st.plotly_chart(fig_box, use_container_width=True)
+            with c2:
+                st.plotly_chart(fig_box, use_container_width=True)
         
     
 # ...existing code...
