@@ -210,13 +210,13 @@ if pred:
     prediction = loaded_model.predict(df_copy)
 
     obesity_levels = {
-        0: '0: Insufficient Weight',
-        1: '1: Normal Weight',
-        2: '2: Overweight Level I',
-        3: '3: Overweight Level II',
-        4: '4: Obesity Type I',
-        5: '5: Obesity Type II',
-        6: '6: Obesity Type III'
+        0: 'Insufficient Weight',
+        1: 'Normal Weight',
+        2: 'Overweight Level I',
+        3: 'Overweight Level II',
+        4: 'Obesity Type I',
+        5: 'Obesity Type II',
+        6: 'Obesity Type III'
     }
     
     # Show the prediction
