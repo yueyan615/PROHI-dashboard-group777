@@ -230,7 +230,7 @@ with st.form("my_form"):
         st.write("### Prediction Probabilities for each class:")
         # Display the probabilities as a bar chart in ordered from lowest to highest
 
-        st.bar_chart(proba_df.T, horizontal=True)
+        st.bar_chart(proba_df.T, horizontal=True, color="#0072b2")
 
         
         st.session_state.prediction = prediction
