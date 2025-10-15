@@ -85,6 +85,7 @@ loaded_model = None
 with open(pre_trained_model_path, "rb") as readFile:
     loaded_model = pickle.load(readFile)
 
+
 with st.form("my_form"):
     # slider_val = st.slider("Form slider")
     # checkbox_val = st.checkbox("Form checkbox")
@@ -149,6 +150,8 @@ with st.form("my_form"):
     transport = st.radio(
         "Which transportation do you usually use?", ("Automobile", "Motorbike", "Bike", "Public Transportation", "Walking"),
     )
+
+  
 
     #now we need to convert the inputs into the format that the model expects
     # Create a DataFrame with the user input
@@ -228,17 +231,14 @@ with st.form("my_form"):
 
         st.bar_chart(proba_df)
 
-        if "prediction" not in st.session_state:
-            st.session_state.prediction = prediction
-
-        if "loaded_model" not in st.session_state:
-            st.session_state.loaded_model = loaded_model
         
-        if "user_data" not in st.session_state:
-            st.session_state.user_data = df_copy
+        st.session_state.prediction = prediction
 
-
-
+        
+        st.session_state.loaded_model = loaded_model
+        
+        
+        st.session_state.user_data = df_copy
 
 
 
