@@ -30,19 +30,19 @@ def categorical_setup(series: pd.Series):
     """Return (plot_series_str, categories_list, color_map)."""
     s = series.copy()
 
-    # 标准化为字符串标签
+    # Standardized as string labels
     if ptypes.is_bool_dtype(s):
         s = s.astype(str)  # "True"/"False"
-        categories = ['False','True']  # 固定顺序
+        categories = ['False','True']  # Fixed order
     elif getattr(s.dtype, "name", "") == "category":
         categories = list(map(str, s.cat.categories))
         s = s.astype(str)
     else:
-        # 其它低基数变量：按出现顺序
+        # Other low-cardinality variables: by order of appearance
         s = s.astype(str)
         categories = list(pd.Index(s.dropna().unique()))
 
-    # 生成颜色映射
+    # Generate color mapping
     color_map = {cat: PALETTE[i % len(PALETTE)] for i, cat in enumerate(categories)}
     return s, categories, color_map
 
@@ -160,18 +160,17 @@ if option:
     # Determine the variable type
     if df[col].dtype == "bool" or df[col].nunique() <= 10:
 
-         # ====== 分类/布尔变量：统一配色与标签 ======
         st.markdown(f"#### Overall {option} Distribution")
 
-        # 统一为字符串 + 取得类别与颜色映射
+        # Standardized as string + Get categories and color mapping
         plot_s, categories, color_map = categorical_setup(df[col])
 
 ########################### 2.1 Overall Distribution ##############################
-        # Overall 计数（使用字符串列）
+        # Overall count (using string column)
         overall_count = plot_s.value_counts(dropna=False).reindex(categories).reset_index()
         overall_count.columns = [col, "Count"]
 
-        # 饼图（统一 category_orders 和 color_discrete_map）
+        # Pie chart (unified category_orders and color_discrete_map)
         fig_overall = px.pie(
             overall_count,
             names=col,
@@ -197,10 +196,10 @@ if option:
 
 
 ############################ 2.2 Distribution by Obesity Level ##############################
-        # 分组图（除 'Obesity_level' 与 'BMI' 外）
+        # Grouped chart (excluding 'Obesity_level' and 'BMI')
         if col != 'Obesity_level' and col != 'BMI':
             st.markdown(f"#### {option} Distribution by Obesity Level")
-            # 注意：分组时用字符串列 plot_s
+            # Note: Use string column plot_s for grouping
             tmp = pd.DataFrame({
                 'Obesity_level': df['Obesity_level'].astype(str),
                 col: plot_s
@@ -209,7 +208,7 @@ if option:
 
             tab3, tab4 = st.tabs(["Chart", "Crosstab"])
             with tab3:
-                # 计算每个肥胖等级内的百分比
+                # Calculate the percentage within each obesity level
                 count_df_with_pct = count_df.copy()
                 count_df_with_pct['Percentage'] = count_df_with_pct.groupby('Obesity_level')['Count'].transform(
                     lambda x: (x / x.sum() * 100).round(1)
@@ -227,25 +226,25 @@ if option:
                         col: categories
                     },
                     color_discrete_map=color_map,
-                    text='Label'  # 使用自定义标签
+                    text='Label'  # Use custom labels
                 )
                 fig.update_layout(
                     height=TABLE_H2,
                     legend_title_text="",
-                    bargap=0.3,        # 控制不同组（肥胖等级）间的间距
-                    bargroupgap=0.1    # 控制同组内柱子间的间距
+                    bargap=0.3,        # Control the gap between different groups (obesity levels)
+                    bargroupgap=0.1    # Control the gap within the same group
                 )
                 
                 # Set the hover information
                 fig.update_traces(
                     textposition='outside',
                     textfont=dict(size=10),
-                    hovertemplate='<b>%{fullData.name}</b><br>' +  # 显示分类名称
-                                'Obesity Level: %{x}<br>' +        # 显示肥胖等级
-                                'Count: %{y}<br>' +                # 显示数量
-                                'Percentage: %{customdata}%<br>' + # 显示百分比
-                                '<extra></extra>',                 # 移除默认的trace box
-                    customdata=count_df_with_pct['Percentage']       # 传入百分比数据
+                    hovertemplate='<b>%{fullData.name}</b><br>' +  # Show category name
+                                'Obesity Level: %{x}<br>' +        # Show obesity level
+                                'Count: %{y}<br>' +                # Show count
+                                'Percentage: %{customdata}%<br>' + # Show percentage
+                                '<extra></extra>',                 # Remove default trace box
+                    customdata=count_df_with_pct['Percentage']       # Pass percentage data
                 )
 
                 st.plotly_chart(fig, use_container_width=True)
@@ -256,8 +255,8 @@ if option:
         st.divider()
 ############################# 2.3 Each Category's Obesity Level Distribution Pie Charts #############################
         st.markdown(f"#### Obesity Level Distribution for each {option} Category")
-        # 饼图1：展示该option各分类的肥胖水平占比
-        # 第一行：前4个
+        # Pie chart 1: Show the obesity level distribution for each category
+        # First row: first 4
         legend_cols_1 = st.columns(4)
         for i in range(4):
             if i < len(OBESITY_ORDER):
@@ -271,9 +270,9 @@ if option:
                         f'</div>',
                         unsafe_allow_html=True
                     )
-        
-        # 第二行：后3个
-        legend_cols_2 = st.columns([1, 1, 1, 1])  # 4列但只用前3列，保持居中
+
+        # Second row: last 3
+        legend_cols_2 = st.columns([1, 1, 1, 1])  # 4 columns but only use the first 3 to keep it centered
         for i in range(3):
             idx = i + 4
             if idx < len(OBESITY_ORDER):
@@ -287,23 +286,22 @@ if option:
                         f'</div>',
                         unsafe_allow_html=True
                     )
-# ...existing code...
-        
-        # 添加间距
+
+        # Add spacing
         st.write("")
-        
-        # 为每个类别分别绘制肥胖等级分布饼图
+
+        # Draw pie charts for each category separately
         num_categories = len(categories)
-        cols_per_row = min(3, num_categories)  # 每行最多3个饼图
+        cols_per_row = min(3, num_categories)  # A maximum of 3 pie charts per line
         
         for i, category in enumerate(categories):
             if i % cols_per_row == 0:
-                # 创建新行，并在每行之间添加间距
+                # Create a new row and add spacing between each row
                 if i > 0:
-                    st.write("")  # 行间距
-                pie_cols = st.columns(cols_per_row, gap="medium")  # 增加列间距
-            
-            # 当前类别下的肥胖等级分布
+                    st.write("")  # Add spacing
+                pie_cols = st.columns(cols_per_row, gap="medium")  # Add column spacing
+
+            # Current category's obesity level distribution
             category_data = count_df[count_df[col] == category]
             
             with pie_cols[i % cols_per_row]:
@@ -317,19 +315,19 @@ if option:
                         color='Obesity_level',
                         color_discrete_map={lvl: PALETTE[i % len(PALETTE)] for i, lvl in enumerate(OBESITY_ORDER)},
                     )
-                    # 添加百分比和计数标签到饼图上
+                    # Add percentage and count labels to the pie chart
                     fig_cat_pie.update_traces(
-                        texttemplate='%{value}<br>(%{percent})',  # 显示计数和百分比
+                        texttemplate='%{value}<br>(%{percent})',  # Show count and percentage
                         textposition='inside',
                         textfont_size=10,
-                        hovertemplate='<b>%{label}</b><br>' +      # 显示肥胖等级名称
-                                    'Count: %{value}<br>' +       # 显示计数
-                                    'Percentage: %{percent}<br>' +# 显示百分比
-                                    '<extra></extra>'             # 移除默认的trace box
+                        hovertemplate='<b>%{label}</b><br>' +      # Show obesity level name
+                                    'Count: %{value}<br>' +       # Show count
+                                    'Percentage: %{percent}<br>' +# Show percentage
+                                    '<extra></extra>'             # Remove default trace box
                     )
                     fig_cat_pie.update_layout(
                         height=240,
-                        showlegend=False,  # 各个饼图不显示图例，使用共用图例
+                        showlegend=False,  # Each pie chart does not show legend, using shared legend
                         title_font_size=16,
                         # title_x=0.4,
                         margin=dict(t=35, b=15, l=15, r=15)
@@ -342,7 +340,7 @@ if option:
 
 ############################## 2.4 BMI Distribution by Each Category ##############################
         st.divider()
-        # 盒图2：展示该option各分类的BMI分布
+        # Box plot 2: Show the BMI distribution for each category of the option
         st.markdown(f"#### BMI Distribution for each {option} Category")
         
         fig_box = px.box(
@@ -384,7 +382,7 @@ if option:
 
 
     else:
-        # ====== 连续变量：统一主色为 PALETTE[0] ======
+        # ====== Continuous variables: Unified main color as PALETTE[0] ======
         st.markdown(f"**Overall {option} Distribution**")
         category_options = list(df[option].unique())
 
@@ -393,8 +391,8 @@ if option:
             x=col,
             nbins=30,
         )
-        # 直方图：柱体颜色统一
-        fig_overall.update_traces(marker_color=PALETTE[0], opacity=0.8)  # 或 marker=dict(color=PALETTE[0])
+        # Histogram: Unified bar color
+        fig_overall.update_traces(marker_color=PALETTE[0], opacity=0.8)  
 
         tab1, tab2 = st.tabs(["Chart", "Details"])
         with tab1:
@@ -406,7 +404,7 @@ if option:
         with tab2:
             summary_df = df[[col]].describe()
             st.dataframe(summary_df, use_container_width=True, height=TABLE_H2)
-        # 箱线图（按肥胖等级分组）：所有箱体同色
+        # Box plot (grouped by obesity level): All boxes in the same color
         st.markdown(f"**{option} Distribution by Obesity Level**")
         fig = px.box(
             df,
@@ -414,12 +412,12 @@ if option:
             y=col,
             category_orders={'Obesity_level': OBESITY_ORDER},
         )
-        # 箱线图：线条/填充/离群点统一
+        # Box plot: Unified line/fill/outlier colors
         fig.update_traces(
-            line_color=PALETTE[0],      # 箱体线条颜色
-            # fillcolor=PALETTE[0],       # 箱体填充颜色
-            marker_color=PALETTE[0],    # 离群点颜色
-            # opacity=0.8,                # 适度半透明，便于重叠观察
+            line_color=PALETTE[0],      # Box line color
+            # fillcolor=PALETTE[0],       # Box fill color
+            marker_color=PALETTE[0],    # Outlier color
+            # opacity=0.8,                # Moderate transparency for overlapping observation
             selector=dict(type='box')
         )
 
