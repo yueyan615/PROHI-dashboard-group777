@@ -4,15 +4,13 @@
 
 ## Introduction
 
-**Obesity-Vision** is an interactive web dashboard designed to explore, visualize, and predict obesity levels based on individual lifestyle and physical condition factors.  
-The project aims to demonstrate how data-driven tools can enhance understanding of obesity risk patterns and support preventive health strategies.
+**Obesity-Vision** is an interactive web dashboard designed to explore, visualize, and predict obesity levels based on individual lifestyle and physical condition factors. The project aims to demonstrate how data-driven tools can enhance understanding of obesity risk patterns and support preventive health strategies.
 
 The medical problem addressed is the **rising global prevalence of obesity**, a major risk factor for chronic diseases such as diabetes, cardiovascular disorders, and metabolic syndrome. Early identification of individuals at risk is essential to guide lifestyle interventions and reduce long-term health burdens.
 
-We used the UCI dataset [**“Estimation of Obesity Levels Based on Eating Habits and Physical Condition”**](https://archive.ics.uci.edu/dataset/544/estimation+of+obesity+levels+based+on+eating+habits+and+physical+condition), which contains anthropometric and behavioral attributes (e.g., physical activity, diet, water intake, and alcohol consumption) labeled according to obesity level.  
-To address class imbalance, the dataset was distributed in a **SMOTE-balanced** form using Weka—resulting in roughly **77% synthetic observations**. A known side effect of this process is that categorical variables were stored as floating-point values.
+We used the UCI dataset [**“Estimation of Obesity Levels Based on Eating Habits and Physical Condition”**](https://archive.ics.uci.edu/dataset/544/estimation+of+obesity+levels+based+on+eating+habits+and+physical+condition), which contains anthropometric and behavioral attributes (e.g., physical activity, diet, water intake, and alcohol consumption) labeled according to obesity level.
 
-For this dashboard, we prepared a **cleaned and rounded version** of the SMOTE-balanced dataset. All categorical fields were rounded and cast to integer codes to preserve their real-world meaning. The data preprocessing and predictive modeling were performed in Python using **Scikit-Learn** and **XGBoost**, with interpretability visualizations generated using **SHAP**.
+For this dashboard, the data preprocessing and predictive modeling were performed in Python using **Scikit-Learn** and **XGBoost**, with interpretability visualizations generated using **SHAP**.
 
 The resulting dashboard allows users to:
 - Interactively explore correlations between lifestyle habits and obesity outcomes.  
