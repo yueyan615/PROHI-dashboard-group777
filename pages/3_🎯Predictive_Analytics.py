@@ -80,7 +80,7 @@ with st.form("my_form"):
     )
 
     fam_hist = st.radio(
-    "Has a family memeber suffered os suffers from overweight?", ("Yes", "No"),
+    "Has a family memeber suffered or suffers from overweight?", ("Yes", "No"),
     )
 
     high_cal = st.radio(
