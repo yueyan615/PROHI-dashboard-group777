@@ -30,16 +30,17 @@ def scroll_to(element_id: str):
     )
 
 with st.sidebar:
+    # Navigation radio buttons
     sec = st.radio(
         "Navigate on the page",
-        ["Prescriptive Analytics", "SHAP Summary Plot", "SHAP Force Plot", "What-if Analysis"],
+        ["SHAP Summary Plot", "SHAP Force Plot", "What-if Analysis", "Top-3 Suggestions"],
         index=0
     )
     mapping = {
-        "Prescriptive Analytics": "Prescriptive Analytics",
         "SHAP Summary Plot": "SHAP Summary Plot",
         "SHAP Force Plot": "SHAP Force Plot",
         "What-if Analysis": "What-if Analysis",
+        "Top-3 Suggestions": "Top-3 Suggestions",
     }
     scroll_to(mapping[sec])
 
@@ -99,7 +100,7 @@ try:
 
     # compact layout
     plt.rcParams.update({
-        "font.size": 6,                # smaller font overall
+        "font.size": 6,
         "axes.titlesize": 6,
         "axes.labelsize": 6,
         "xtick.labelsize": 6,
@@ -107,7 +108,7 @@ try:
     })
     shap.summary_plot(sv_summary, user_data, show=False, plot_type="bar")
     fig = plt.gcf()
-    fig.set_size_inches(6, 3)          # smaller figure
+    fig.set_size_inches(6, 3)
     plt.tight_layout()
     st.pyplot(fig, clear_figure=True, use_container_width=False)
 
@@ -115,13 +116,12 @@ except Exception as e:
     st.warning(f"SHAP summary plot failed: {e}")
 
 # -------------------------------
-# SHAP Force Plot — EXACTLY your original version
+# SHAP Force Plot
 # -------------------------------
 st.markdown('<div id="SHAP Force Plot"></div>', unsafe_allow_html=True)
 st.subheader("SHAP Force Plot")
 
 try:
-    # keep your original indexing & API
     st_shap(
         shap.force_plot(
             explainer.expected_value[int(prediction[0])],
@@ -151,7 +151,7 @@ CLASSES = [
     "Overweight Level II", "Obesity Type I", "Obesity Type II", "Obesity Type III"
 ]
 
-# Features we allow users to adjust (encoded values only)
+# Actionable features and their allowed values (encoded)
 ACTIONABLE_BOUNDS = {
     "Veggie_consumption_freq": [0, 1, 2, 3],
     "Water_consumption": [0, 1, 2],
@@ -222,6 +222,62 @@ with right:
     plt.tight_layout()
     st.pyplot(fig_cmp, clear_figure=True)
     st.metric("Δ Severity (Adjusted − Original)", f"{delta:+.2f}")
+
+# -------------------------------
+# Top-3 Suggestions
+# -------------------------------
+st.markdown('<div id="Top-3 Suggestions"></div>', unsafe_allow_html=True)
+st.markdown("### Top-3 Single-Step Suggestions")
+
+st.info(
+    r"""
+We try **one change at a time** on actionable features and pick the **top-3** that **lower the Severity score** the most.  
+Lower Δ means better (↓ severity).
+"""
+)
+
+try:
+    base_sev = severity_score(base_prob)
+    current  = base_df.iloc[0].copy()
+    suggestions = []
+
+    for feat, allowed in ACTIONABLE_BOUNDS.items():
+        if feat not in current.index:
+            continue
+        cur_val = int(current[feat])
+        for alt in allowed:
+            if int(alt) == cur_val:
+                continue
+            test = current.copy()
+            test[feat] = int(alt)
+            new_prob = proba_row(loaded_model, pd.DataFrame([test]))
+            new_sev  = severity_score(new_prob)
+            delta    = float(new_sev - base_sev)
+            suggestions.append((feat, cur_val, int(alt), delta))
+
+    if len(suggestions) == 0:
+        st.info("No actionable single-step suggestions available.")
+    else:
+        res = (
+            pd.DataFrame(
+                suggestions, 
+                columns=["Feature", "Current", "Alternative", "Δ Severity"]
+            )
+            .sort_values("Δ Severity", ascending=True)
+            .head(3)
+            .reset_index(drop=True)
+        )
+        res["Direction"]   = np.where(res["Δ Severity"] < 0, "↓ improves", "↑ worsens")
+        res["Δ Severity"]  = res["Δ Severity"].map(lambda x: f"{x:+.2f}")
+
+        st.dataframe(
+            res[["Feature", "Current", "Alternative", "Direction", "Δ Severity"]],
+            use_container_width=True,
+            hide_index=True
+        )
+
+except Exception as e:
+    st.warning(f"Could not generate suggestions: {e}")
 
 st.caption("⚠️ Counterfactual changes are hypothetical and for learning only.")
 
