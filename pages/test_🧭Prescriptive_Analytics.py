@@ -89,6 +89,20 @@ def get_per_class_shap(shap_values, class_idx=None):
 def proba_row(model, Xrow: pd.DataFrame) -> np.ndarray:
     return model.predict_proba(Xrow)[0]
 
+# === Scores ===
+def severity_score(p: np.ndarray) -> float:
+    """Expected class index (0..6). Lower is better."""
+    idx = np.arange(len(p))
+    return float((p * idx).sum())
+
+def health_score_from_severity(sev: float) -> float:
+    """Map severity (0..6) -> Health Score (0..100, higher is better)."""
+    return 100.0 * (1.0 - sev / 6.0)
+
+def health_score(p: np.ndarray) -> float:
+    """Health Score from probability vector directly."""
+    return health_score_from_severity(severity_score(p))
+
 # -------------------------------
 # SHAP Summary Plot (same content; smaller fonts/figure)
 # -------------------------------
@@ -98,7 +112,7 @@ st.subheader("SHAP Summary Plot")
 try:
     sv_summary, _ = get_per_class_shap(shap_values, class_idx=int(prediction[0]))
 
-    # compact layout
+    # compact layout (content unchanged)
     plt.rcParams.update({
         "font.size": 6,
         "axes.titlesize": 6,
@@ -116,7 +130,7 @@ except Exception as e:
     st.warning(f"SHAP summary plot failed: {e}")
 
 # -------------------------------
-# SHAP Force Plot
+# SHAP Force Plot（内容不变）
 # -------------------------------
 st.markdown('<div id="SHAP Force Plot"></div>', unsafe_allow_html=True)
 st.subheader("SHAP Force Plot")
@@ -142,7 +156,7 @@ st.markdown("---")
 st.subheader("What-if / Counterfactual Analysis")
 
 st.caption(
-    "Adjust feasible, encoded factors below to see how the predicted class distribution and a simple severity score change. "
+    "Adjust feasible, encoded factors below to see how the predicted class distribution and your **Health Score (0–100 ↑)** change. "
     "Educational use only—this does **not** imply causality or medical advice."
 )
 
@@ -166,27 +180,21 @@ ACTIONABLE_BOUNDS = {
     # "Alcohol_consumption_freq": [0, 1, 2, 3],
 }
 
-def severity_score(p: np.ndarray) -> float:
-    idx = np.arange(len(p))
-    return float((p * idx).sum())
-
+# Baseline
 base_df   = user_data.copy()
 base_prob = proba_row(loaded_model, base_df)
 base_sev  = severity_score(base_prob)
+base_hs   = health_score_from_severity(base_sev)
 base_cls  = CLASSES[int(np.argmax(base_prob))]
 
-m1, m2 = st.columns(2)
+m1, m2, m3 = st.columns(3)
 with m1:
     st.metric("Predicted class", base_cls)
 with m2:
-    st.metric("Severity (expected class index ↓)", f"{base_sev:.2f}")
+    st.metric("Health Score (0–100 ↑)", f"{base_hs:.1f}")
+with m3:
+    st.metric("Severity (0–6 ↓)", f"{base_sev:.2f}")
 
-with st.container(border=True):
-    st.markdown(
-        "**Severity (↓ better):** expected class index. "
-        "Classes 0–6 = Insufficient Weight, …, Obesity Type III."
-    )
-    st.latex(r"\text{Severity}=\sum_{i=0}^{6} p_i\, i \quad\text{where } p_i=\Pr(\text{class}=i)")
 
 # 4-column layout for selectors
 st.markdown("### Adjust factors manually")
@@ -211,40 +219,42 @@ for grp in chunk4(items):
                 idx = 0
             cf_row[feat] = st.selectbox(feat, allowed, index=idx, key=f"cf_{feat}")
 
+# Recompute with adjustments
 cf_df   = pd.DataFrame([cf_row])
 cf_prob = proba_row(loaded_model, cf_df)
 cf_sev  = severity_score(cf_prob)
-delta   = cf_sev - base_sev
+cf_hs   = health_score_from_severity(cf_sev)
+
+delta_hs = cf_hs - base_hs   # points (0..100)
 
 left, right = st.columns(2)
 with left:
     st.write("**Adjusted class probabilities**")
     st.bar_chart(pd.Series(cf_prob, index=CLASSES))
 with right:
-    st.write("**Original vs Adjusted Severity**")
+    st.write("**Original vs Adjusted Health Score**")
     fig_cmp, ax_cmp = plt.subplots(figsize=(4, 2))
-    bars = ax_cmp.barh(["Original", "Adjusted"], [base_sev, cf_sev])
-    ax_cmp.set_xlabel("Expected Class Index (lower is better)")
-    ax_cmp.bar_label(bars, fmt="%.2f", padding=3)
+    bars = ax_cmp.barh(["Original", "Adjusted"], [base_hs, cf_hs])
+    ax_cmp.set_xlabel("Health Score (higher is better)")
+    ax_cmp.bar_label(bars, fmt="%.1f", padding=3)
     plt.tight_layout()
     st.pyplot(fig_cmp, clear_figure=True)
-    st.metric("Δ Severity (Adjusted − Original)", f"{delta:+.2f}")
+    st.metric("Δ Health Score (Adjusted − Original)", f"{delta_hs:+.1f} pts")
 
 # -------------------------------
-# Top-3 Suggestions
+# Top-3 Suggestions（基于 Health Score）
 # -------------------------------
 st.markdown('<div id="Top-3 Suggestions"></div>', unsafe_allow_html=True)
-st.markdown("### Top-3 Single-Step Suggestions")
+st.markdown("### Top-3 Single-Step Suggestions (by Health Score ↑)")
 
 st.info(
     r"""
-We try **one change at a time** on actionable features and pick the **top-3** that **lower the Severity score** the most.  
-Lower Δ means better (↓ severity).
+We try **one change at a time** on actionable features and pick the **top-3** with the **largest Health Score increase**.  
+Bigger positive Δ means better (↑ Health Score).
 """
 )
 
 try:
-    base_sev = severity_score(base_prob)
     current  = base_df.iloc[0].copy()
     suggestions = []
 
@@ -258,9 +268,9 @@ try:
             test = current.copy()
             test[feat] = int(alt)
             new_prob = proba_row(loaded_model, pd.DataFrame([test]))
-            new_sev  = severity_score(new_prob)
-            delta    = float(new_sev - base_sev)
-            suggestions.append((feat, cur_val, int(alt), delta))
+            new_hs   = health_score(new_prob)
+            delta_hs = float(new_hs - base_hs)  # points
+            suggestions.append((feat, cur_val, int(alt), delta_hs))
 
     if len(suggestions) == 0:
         st.info("No actionable single-step suggestions available.")
@@ -268,17 +278,17 @@ try:
         res = (
             pd.DataFrame(
                 suggestions, 
-                columns=["Feature", "Current", "Alternative", "Δ Severity"]
+                columns=["Feature", "Current", "Alternative", "Δ Health Score (pts)"]
             )
-            .sort_values("Δ Severity", ascending=True)
+            .sort_values("Δ Health Score (pts)", ascending=False)
             .head(3)
             .reset_index(drop=True)
         )
-        res["Direction"]   = np.where(res["Δ Severity"] < 0, "↓ improves", "↑ worsens")
-        res["Δ Severity"]  = res["Δ Severity"].map(lambda x: f"{x:+.2f}")
+        res["Direction"] = np.where(res["Δ Health Score (pts)"] > 0, "↑ improves", "↓ worsens")
+        res["Δ Health Score (pts)"] = res["Δ Health Score (pts)"].map(lambda x: f"{x:+.1f}")
 
         st.dataframe(
-            res[["Feature", "Current", "Alternative", "Direction", "Δ Severity"]],
+            res[["Feature", "Current", "Alternative", "Direction", "Δ Health Score (pts)"]],
             use_container_width=True,
             hide_index=True
         )
@@ -287,3 +297,9 @@ except Exception as e:
     st.warning(f"Could not generate suggestions: {e}")
 
 st.caption("⚠️ Counterfactual changes are hypothetical and for learning only.")
+
+with st.container(border=True):
+    st.markdown(
+        "**Health Score (↑ better):** a linear transformation of the model’s expected obesity level (Severity, 0–6, lower is better) into a 0–100 scale, where a higher score indicates a healthier predicted outcome."
+    )
+    st.latex(r"\text{Severity}=\sum_{i=0}^{6} p_i\, i \quad\text{and}\quad \text{HealthScore}=100\!\left(1-\frac{\text{Severity}}{6}\right)")
