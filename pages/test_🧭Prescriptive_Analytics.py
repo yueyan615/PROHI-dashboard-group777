@@ -224,3 +224,10 @@ with right:
     st.metric("Δ Severity (Adjusted − Original)", f"{delta:+.2f}")
 
 st.caption("⚠️ Counterfactual changes are hypothetical and for learning only.")
+
+with st.container(border=True):
+    st.markdown(
+        "**Severity (↓ better):** expected class index. "
+        "Classes 0–6 = Insufficient Weight, …, Obesity Type III."
+    )
+    st.latex(r"\text{Severity}=\sum_{i=0}^{6} p_i\, i \quad\text{where } p_i=\Pr(\text{class}=i)")
