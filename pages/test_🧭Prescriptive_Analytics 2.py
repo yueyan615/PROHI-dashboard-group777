@@ -130,7 +130,7 @@ except Exception as e:
     st.warning(f"SHAP summary plot failed: {e}")
 
 # -------------------------------
-# SHAP Force Plot（内容不变）
+# SHAP Force Plot
 # -------------------------------
 st.markdown('<div id="SHAP Force Plot"></div>', unsafe_allow_html=True)
 st.subheader("SHAP Force Plot")
@@ -180,6 +180,19 @@ ACTIONABLE_BOUNDS = {
     # "Alcohol_consumption_freq": [0, 1, 2, 3],
 }
 
+LABELS = {
+    "Veggie_consumption_freq": {0: "Never", 1: "Sometimes", 2: "Frequently", 3: "Always"},
+    "Water_consumption": {0: "Less than a liter", 1: "Between 1 and 2 L", 2: "More than 2 L"},
+    "Physical_activity": {0: "I do not", 2: "1 or 2 days", 3: "2 or 4 days", 4: "4 or 5 days"},
+    "Food_between_meals_freq": {0: "No", 1: "Sometimes", 2: "Frequently", 3: "Always"},
+    "Screen_time": {0: "0–2 hours", 1: "3–5 hours", 2: "More than 5 hours"},
+    "Main_meals_count": {0: "Between 1 and 2", 1: "Three", 2: "More than three"},
+    "Monitors_calories": {0: "No", 1: "Yes"},
+    "High_caloric_food": {0: "No", 1: "Yes"},
+    "Smokes": {0: "No", 1: "Yes"},
+    "Transportation_mode": {1: "Walking", 2: "Bike", 3: "Motorbike", 4: "Public Transportation", 5: "Automobile"},
+}
+
 # Baseline
 base_df   = user_data.copy()
 base_prob = proba_row(loaded_model, base_df)
@@ -217,7 +230,15 @@ for grp in chunk4(items):
                 idx = allowed.index(cur)
             except ValueError:
                 idx = 0
-            cf_row[feat] = st.selectbox(feat, allowed, index=idx, key=f"cf_{feat}")
+
+            # >>> make a selectbox with labels if available
+            cf_row[feat] = st.selectbox(
+                label=feat,
+                options=allowed,
+                index=idx,
+                format_func=lambda v: f"{v} — {LABELS.get(feat, {}).get(v, 'N/A')}",
+                key=f"cf_{feat}"
+            )
 
 # Recompute with adjustments
 cf_df   = pd.DataFrame([cf_row])
@@ -242,7 +263,7 @@ with right:
     st.metric("Δ Health Score (Adjusted − Original)", f"{delta_hs:+.1f} pts")
 
 # -------------------------------
-# Top-3 Suggestions（基于 Health Score）
+# Top-3 Suggestions（Health Score based）
 # -------------------------------
 st.markdown('<div id="Top-3 Suggestions"></div>', unsafe_allow_html=True)
 st.markdown("### Top-3 Single-Step Suggestions (by Health Score ↑)")
@@ -255,7 +276,8 @@ Bigger positive Δ means better (↑ Health Score).
 )
 
 try:
-    current  = base_df.iloc[0].copy()
+    # based on health score
+    current = base_df.iloc[0].copy()
     suggestions = []
 
     for feat, allowed in ACTIONABLE_BOUNDS.items():
@@ -263,27 +285,42 @@ try:
             continue
         cur_val = int(current[feat])
         for alt in allowed:
-            if int(alt) == cur_val:
+            alt = int(alt)
+            if alt == cur_val:
                 continue
             test = current.copy()
-            test[feat] = int(alt)
+            test[feat] = alt
             new_prob = proba_row(loaded_model, pd.DataFrame([test]))
-            new_hs   = health_score(new_prob)
-            delta_hs = float(new_hs - base_hs)  # points
-            suggestions.append((feat, cur_val, int(alt), delta_hs))
+            new_hs   = health_score(new_prob)  # 0-100 越高越好
+            delta_hs = float(new_hs - base_hs)
+            suggestions.append((feat, cur_val, alt, delta_hs))
 
-    if len(suggestions) == 0:
+    if not suggestions:
         st.info("No actionable single-step suggestions available.")
     else:
         res = (
             pd.DataFrame(
-                suggestions, 
+                suggestions,
                 columns=["Feature", "Current", "Alternative", "Δ Health Score (pts)"]
             )
             .sort_values("Δ Health Score (pts)", ascending=False)
             .head(3)
             .reset_index(drop=True)
         )
+
+        # make codes more readable
+        def fmt_code_with_label(feat: str, val) -> str:
+            try:
+                ival = int(val)
+            except Exception:
+                return str(val)
+            label = LABELS.get(feat, {}).get(ival)
+            return f"{ival} — {label}" if label is not None else f"{ival}"
+
+        res["Current"] = res.apply(lambda r: fmt_code_with_label(r["Feature"], r["Current"]), axis=1)
+        res["Alternative"] = res.apply(lambda r: fmt_code_with_label(r["Feature"], r["Alternative"]), axis=1)
+
+        # arrow and formatted delta
         res["Direction"] = np.where(res["Δ Health Score (pts)"] > 0, "↑ improves", "↓ worsens")
         res["Δ Health Score (pts)"] = res["Δ Health Score (pts)"].map(lambda x: f"{x:+.1f}")
 

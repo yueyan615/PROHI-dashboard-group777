@@ -92,7 +92,7 @@ with st.form("my_form"):
     )
 
     meals = st.radio(
-        "How many main meals do you have daily?", ("Between 1 and 2", "Three", "More than 3"),
+        "How many main meals do you have daily?", ("Between 1 and 2", "Three", "More than three"),
     )
 
     snacks = st.radio(
@@ -112,7 +112,7 @@ with st.form("my_form"):
     )
 
     pysical = st.radio(
-        "How often do you have physical activity?", ("I do not", "1 or 2 days", "2 or 4 days", " 4 or 5 days"),
+        "How often do you have physical activity?", ("I do not", "1 or 2 days", "2 or 4 days", "4 or 5 days"),
     )
 
     screen = st.radio(
@@ -179,7 +179,7 @@ if pred:
 
         X["Screen_time"] = X["Screen_time"].map({"0-2 hours": 0, "3-5 hours": 1, "More than 5 hours": 2})
 
-        X["Transportation_mode"] = X["Transportation_mode"].map({"Automobile": 5, "Public_Transportation": 4, "Motorbike": 3, "Bike": 2, "Walking": 1})
+        X["Transportation_mode"] = X["Transportation_mode"].map({"Automobile": 5, "Public_Transportation": 4, "Public Transportation": 4, "Motorbike": 3, "Bike": 2, "Walking": 1})
 
         return X
 
