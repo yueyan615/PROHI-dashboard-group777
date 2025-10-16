@@ -1,6 +1,4 @@
-# PROHI Dashboard
-
-# Obesity-Vision
+# PROHI Dashboard -- Obesity-Vision
 
 ![Obesity-Vision](./img/logo.svg)
 
