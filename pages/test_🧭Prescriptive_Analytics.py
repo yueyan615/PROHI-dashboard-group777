@@ -181,6 +181,13 @@ with m1:
 with m2:
     st.metric("Severity (expected class index ↓)", f"{base_sev:.2f}")
 
+with st.container(border=True):
+    st.markdown(
+        "**Severity (↓ better):** expected class index. "
+        "Classes 0–6 = Insufficient Weight, …, Obesity Type III."
+    )
+    st.latex(r"\text{Severity}=\sum_{i=0}^{6} p_i\, i \quad\text{where } p_i=\Pr(\text{class}=i)")
+
 # 4-column layout for selectors
 st.markdown("### Adjust factors manually")
 st.caption("Values shown are **encoded** levels used by the model.")
@@ -280,10 +287,3 @@ except Exception as e:
     st.warning(f"Could not generate suggestions: {e}")
 
 st.caption("⚠️ Counterfactual changes are hypothetical and for learning only.")
-
-with st.container(border=True):
-    st.markdown(
-        "**Severity (↓ better):** expected class index. "
-        "Classes 0–6 = Insufficient Weight, …, Obesity Type III."
-    )
-    st.latex(r"\text{Severity}=\sum_{i=0}^{6} p_i\, i \quad\text{where } p_i=\Pr(\text{class}=i)")
