@@ -57,7 +57,6 @@ To run the dashboard execute the following command:
 
 ``` bash
 > streamlit run Welcome.py
-
 # If the command above fails, use:
 > 1. Create the environment with `python -m venv env`
   2. Activate the virtual environment for Python
