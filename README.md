@@ -1,22 +1,27 @@
-# PROHI Dashboard Example
+# PROHI Dashboard
 
-# [Name of the project]
+# [Obesity-Vision]
 
-_You can modify this README file with all the information that your team consider relevant for a technical audience who would like to understand your project or to run it in the future._
-
-_Note that this file is written in **MarkDown** language. A reference is available here: <https://www.markdownguide.org/basic-syntax/>_
-
-Include the name, logo and images refering to your project
-
-![Your dashboard](./assets/example-image.jpg)
+![Obesity-Vision](./img/logo.svg)
 
 ## Introduction
 
-[Project: Obesity-Vision] is an interactive web dashboard to....
+**Obesity-Vision** is an interactive web dashboard designed to explore, visualize, and predict obesity levels based on individual lifestyle and physical condition factors.  
+The project aims to demonstrate how data-driven tools can enhance understanding of obesity risk patterns and support preventive health strategies.
 
-The problem detected was...
+The medical problem addressed is the **rising global prevalence of obesity**, a major risk factor for chronic diseases such as diabetes, cardiovascular disorders, and metabolic syndrome. Early identification of individuals at risk is essential to guide lifestyle interventions and reduce long-term health burdens.
 
-The proposed solution is valuable because...
+We used the UCI dataset [**“Estimation of Obesity Levels Based on Eating Habits and Physical Condition”**](https://archive.ics.uci.edu/dataset/544/estimation+of+obesity+levels+based+on+eating+habits+and+physical+condition), which contains anthropometric and behavioral attributes (e.g., physical activity, diet, water intake, and alcohol consumption) labeled according to obesity level.  
+To address class imbalance, the dataset was distributed in a **SMOTE-balanced** form using Weka—resulting in roughly **77% synthetic observations**. A known side effect of this process is that categorical variables were stored as floating-point values.
+
+For this dashboard, we prepared a **cleaned and rounded version** of the SMOTE-balanced dataset. All categorical fields were rounded and cast to integer codes to preserve their real-world meaning. The data preprocessing and predictive modeling were performed in Python using **Scikit-Learn** and **XGBoost**, with interpretability visualizations generated using **SHAP**.
+
+The resulting dashboard allows users to:
+- Interactively explore correlations between lifestyle habits and obesity outcomes.  
+- Visualize the impact of features using SHAP value interpretation.  
+- Input custom values to **predict obesity level categories** with a pre-trained model.
+
+All analyses are intended for **educational and exploratory purposes**, demonstrating the potential of machine learning to support obesity prevention and health education.
 
 ## System description
 
@@ -29,12 +34,15 @@ Tested on Python 3.12.7 with the following packages:
   - Plotly v6.2.0
   - Scikit-Learn v1.7.0
   - shap v0.48.0
+  - xgboost v3.0.5
 
 ### Installation
 
 Run the commands below in a terminal to configure the project and install the package dependencies for the first time.
 
-If you are using Mac, you may need to follow install Xcode. Check the official Streamlit documentation [Streamlit](https://docs.streamlit.io/get-started/installation/command-line#prerequisites).
+If you are using macOS, you may need to install **Xcode Command Line Tools** and **OpenMP (libomp)** to support XGBoost.
+
+Check the official Streamlit documentation [Streamlit](https://docs.streamlit.io/get-started/installation/command-line#prerequisites).
 
 1. Create the environment with `python -m venv env`
 2. Activate the virtual environment for Python
