@@ -70,7 +70,11 @@ To run the dashboard execute the following command:
 ## Contributors
 
 _Zsolt Fehér_
+
 _Weiqi Kong_
+
 _Christoffer Brändefors_
+
 _Yueyan Li_
+
 _Naznin Akhtar_
