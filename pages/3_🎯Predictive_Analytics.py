@@ -204,6 +204,7 @@ if pred:
     st.write("### Prediction Result")
     st.write(f"The predicted obesity level with probability for the given input data is : **{obesity_levels[prediction[0]]}**")
 
+    st.divider()
 
     #show the probability for each class
     prediction_proba = loaded_model.predict_proba(df_copy)

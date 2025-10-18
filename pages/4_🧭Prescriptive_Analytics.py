@@ -72,6 +72,8 @@ if "prediction" in st.session_state and "loaded_model" in st.session_state and "
     st.pyplot(fig)
     st.write("The SHAP summary plot above shows the average impact of each feature on the model's predictions across all classes. Features are ranked by their importance, with the most influential features at the top. The length of each bar indicates the magnitude of the feature's contribution to the prediction, averaged over all samples.")
 
+    st.divider()
+    
     st.markdown('<div id="SHAP Force Plot"></div>', unsafe_allow_html=True)
     st.write("## SHAP Force Plot")
     ## st.pyplot(shap.plots.force(explainer.expected_value[prediction[0]], shap_values[:, :, prediction[0]], user_data.iloc[0, :] ,matplotlib=True))
