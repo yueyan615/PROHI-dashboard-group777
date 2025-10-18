@@ -35,8 +35,8 @@ def scroll_to(element_id: str):
     )
 
 with st.sidebar:
-    sec = st.radio("Navigate on the page", ["Predictive Analytics","Input Your Data Here"], index=0)
-    mapping = {"Predictive Analytics": "Predictive Analytics", "Input Your Data Here": "Input Your Data Here"}
+    sec = st.radio("Navigate on the page", ["Predictive Analytics","Input Your Data Here", "Prediction Results"], index=0)
+    mapping = {"Predictive Analytics": "Predictive Analytics", "Input Your Data Here": "Input Your Data Here", "Prediction Results": "Prediction Results"}
     scroll_to(mapping[sec])
 
 
@@ -136,7 +136,8 @@ with st.form("my_form"):
     # Create a DataFrame with the user input
     pred = st.form_submit_button("Predict🎯")
 
-    
+st.markdown('<div id="Input Your Data Here"></div>', unsafe_allow_html=True)
+st.write("### Prediction Results")
 if pred:
     user_data = pd.DataFrame({"Gender": [gender],
                             "Age": [age],
@@ -154,8 +155,9 @@ if pred:
                             "Transportation_mode": [transport]
                             })
     
+
     # after submit show the user data
-    st.write("### Your input")
+    st.write("##### Your input")
     st.dataframe(user_data)
 
     # Convert categorical variables to numerical using the method from prediction
@@ -199,17 +201,28 @@ if pred:
         5: 'Obesity Type II',
         6: 'Obesity Type III'
     }
-    
-    # Show the prediction
-    st.write("### Prediction Result")
-    st.write(f"The predicted obesity level with probability for the given input data is : **{obesity_levels[prediction[0]]}**")
 
-    st.divider()
+    st.write("<br>", unsafe_allow_html=True)
+    # The predicted obesity level with probability for the given input data is :
+    st.write("##### Your Result")
+    # st.write(f"**{obesity_levels[prediction[0]]}**")
+    st.markdown(
+        f"""
+        <div style="display:flex; justify-content:center; align-items:center; margin:10px 0;">
+          <div style="border:2px solid #0072b2; background-color:#f7fbfd; padding:14px 20px; border-radius:8px; min-width:320px; text-align:center;">
+            <span style="font-size:28px; color:#0072b2; font-weight:700; line-height:1.2">{obesity_levels[prediction[0]]}</span>
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     #show the probability for each class
     prediction_proba = loaded_model.predict_proba(df_copy)
     proba_df = pd.DataFrame(prediction_proba, columns=[obesity_levels[i] for i in range(len(obesity_levels))])
-    st.write("### Class Probabilities")
+
+    st.write("<br>", unsafe_allow_html=True)
+    st.write("##### Probabilities For Each Obesity Level")
     # Display the probabilities as a bar chart in ordered from lowest to highest
 
     st.bar_chart(proba_df.T, horizontal=True, color="#0072b2")
@@ -223,7 +236,8 @@ if pred:
     
     st.session_state.user_data = df_copy
 
-
+else:
+    st.info("Fill in the form and click the Predict🎯 button to see the prediction results.")
 
 
 
