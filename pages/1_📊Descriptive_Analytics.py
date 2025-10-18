@@ -340,17 +340,22 @@ if option:
 
 ############################## 2.4 BMI Distribution by Each Category ##############################
             st.divider()
-            # Box plot 2: Show the BMI distribution for each category of the option
             st.markdown(f"#### BMI Distribution for each {option} Category")
-            
+
+            # Simple handling: Use a stringified temporary column as the plotting column, and booleans can also share the color_map with categories.
+            plot_s = df[col].astype(str)
+            tmp_df = df.copy()
+            tmp_df["_plot_col"] = plot_s
+
             fig_box = px.box(
-                df,
-                x=col,
-                y='BMI',
-                category_orders={col: categories},
-                color=col,
+                tmp_df,
+                x="_plot_col",
+                y="BMI",
+                category_orders={"_plot_col": categories},
+                color="_plot_col",
                 color_discrete_map=color_map,
             )
+            fig_box.update_xaxes(title_text=col)
             fig_box.update_layout(
                 height=400,
                 title="",
@@ -359,25 +364,20 @@ if option:
                 margin=dict(t=50, b=50, l=50, r=50)
             )
 
-            c1, c2 = st.columns([1, 3], gap="large")
+            c1, c2 = st.columns([3, 2], gap="large")
             with c1:
-                st.markdown("<br><b></b>", unsafe_allow_html=True)
-
-                st.write("**Mean BMI for each category**")
-                for category in categories:
-                    mean_bmi = df[df[col] == category]['BMI'].mean()
-                    st.write(f"- {category}: {mean_bmi:.2f}")
+                st.plotly_chart(fig_box, use_container_width=True)
 
             with c2:
-                st.plotly_chart(fig_box, use_container_width=True)
-        
-    
-# ...existing code...
+                st.markdown("<br><b></b>", unsafe_allow_html=True)
+                with st.container(height=TABLE_H2):
+                    st.write("##### Mean BMI for each category")
+                    # Calculate the mean using string columns, ensuring consistency between booleans and strings
+                    for category in categories:
+                        mean_bmi = df[plot_s == category]['BMI'].mean()
+                        st.write(f"- {category}: **{mean_bmi:.2f}**")
 
-
-
-
-                        
+                       
 
 
 

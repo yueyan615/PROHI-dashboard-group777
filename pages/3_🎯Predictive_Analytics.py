@@ -136,8 +136,8 @@ with st.form("my_form"):
     # Create a DataFrame with the user input
     pred = st.form_submit_button("Predict🎯")
 
-st.markdown('<div id="Input Your Data Here"></div>', unsafe_allow_html=True)
-st.write("### Prediction Results")
+st.markdown('<div id="Prediction Results"></div>', unsafe_allow_html=True)
+st.write("## Prediction Results")
 if pred:
     user_data = pd.DataFrame({"Gender": [gender],
                             "Age": [age],
@@ -157,7 +157,7 @@ if pred:
     
 
     # after submit show the user data
-    st.write("##### Your input")
+    st.write("#### Your Input")
     st.dataframe(user_data)
 
     # Convert categorical variables to numerical using the method from prediction
@@ -204,7 +204,7 @@ if pred:
 
     st.write("<br>", unsafe_allow_html=True)
     # The predicted obesity level with probability for the given input data is :
-    st.write("##### Your Result")
+    st.write("#### Your Result")
     # st.write(f"**{obesity_levels[prediction[0]]}**")
     st.markdown(
         f"""
@@ -222,7 +222,7 @@ if pred:
     proba_df = pd.DataFrame(prediction_proba, columns=[obesity_levels[i] for i in range(len(obesity_levels))])
 
     st.write("<br>", unsafe_allow_html=True)
-    st.write("##### Probabilities For Each Obesity Level")
+    st.write("#### Probabilities For Each Obesity Level")
     # Display the probabilities as a bar chart in ordered from lowest to highest
 
     st.bar_chart(proba_df.T, horizontal=True, color="#0072b2")
