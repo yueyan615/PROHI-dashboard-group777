@@ -198,7 +198,7 @@ if option:
 ############################ 2.2 Distribution by Obesity Level ##############################
         # Grouped chart (excluding 'Obesity_level' and 'BMI')
         if col != 'Obesity_level' and col != 'BMI':
-            st.markdown(f"#### {option} Distribution by Obesity Level")
+            st.markdown(f"#### {option} Distribution By Obesity Level")
             # Note: Use string column plot_s for grouping
             tmp = pd.DataFrame({
                 'Obesity_level': df['Obesity_level'].astype(str),
@@ -254,7 +254,7 @@ if option:
                 st.dataframe(ctab, use_container_width=True, height=TABLE_H2)
             st.divider()
 ############################# 2.3 Each Category's Obesity Level Distribution Pie Charts #############################
-            st.markdown(f"#### Obesity Level Distribution for each {option} Category")
+            st.markdown(f"#### Obesity Level Distribution For Each {option} Category")
             # Pie chart 1: Show the obesity level distribution for each category
             # First row: first 4
             legend_cols_1 = st.columns(4)
@@ -340,7 +340,7 @@ if option:
 
 ############################## 2.4 BMI Distribution by Each Category ##############################
             st.divider()
-            st.markdown(f"#### BMI Distribution for each {option} Category")
+            st.markdown(f"#### BMI Distribution For Each {option} Category")
 
             # Simple handling: Use a stringified temporary column as the plotting column, and booleans can also share the color_map with categories.
             plot_s = df[col].astype(str)
@@ -405,7 +405,7 @@ if option:
             summary_df = df[[col]].describe()
             st.dataframe(summary_df, use_container_width=True, height=TABLE_H2)
         # Box plot (grouped by obesity level): All boxes in the same color
-        st.markdown(f"**{option} Distribution by Obesity Level**")
+        st.markdown(f"**{option} Distribution By Obesity Level**")
         fig = px.box(
             df,
             x='Obesity_level',
