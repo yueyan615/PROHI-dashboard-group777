@@ -66,66 +66,69 @@ with st.form("my_form"):
     # slider_val = st.slider("Form slider")
     # checkbox_val = st.checkbox("Form checkbox")
 
-    gender = st.radio(
-    "Gender", ("Male", "Female"),
-    )
+    c1, c2 = st.columns(2, gap="large")
+    with c1:
+        gender = st.radio(
+        "**Gender**", ("Male", "Female"),
+        )
 
-    age = st.number_input(
-        "Age (year)",
-        placeholder="Type a number...",
-        value=18,
-        min_value=18,
-        max_value=100,
-        format="%i"   # Do not force a fixed number of decimal places; display according to the actual significant digits.
-    )
+        age = st.number_input(
+            "**Age (year)**",
+            placeholder="Type a number...",
+            value=18,
+            min_value=18,
+            max_value=100,
+            format="%i"   # Do not force a fixed number of decimal places; display according to the actual significant digits.
+        )
 
-    fam_hist = st.radio(
-    "Has a family memeber suffered or suffers from overweight?", ("Yes", "No"),
-    )
+        fam_hist = st.radio(
+        "**Has a family member suffered or suffers from overweight?**", ("Yes", "No"),
+        )
 
-    high_cal = st.radio(
-    "Do you eat high caloric food frequently?", ("Yes", "No"),
-    )
+        high_cal = st.radio(
+        "**Do you eat high caloric food frequently?**", ("Yes", "No"),
+        )
 
-    vegie = st.radio(
-    "Do you usually eat vegetables in your meals?", ("Never", "Sometimes", "Always"),
-    )
+        vegie = st.radio(
+        "**Do you usually eat vegetables in your meals?**", ("Never", "Sometimes", "Always"),
+        )
 
-    meals = st.radio(
-        "How many main meals do you have daily?", ("Between 1 and 2", "Three", "More than three"),
-    )
+        meals = st.radio(
+            "**How many main meals do you have daily?**", ("Between 1 and 2", "Three", "More than three"),
+        )
 
-    snacks = st.radio(
-        "Do you eat food between meals?", ("No", "Sometimes", "Frequently", "Always"),
-    )
+        snacks = st.radio(
+            "**Do you eat food between meals?**", ("No", "Sometimes", "Frequently", "Always"),
+        )
 
-    smoke = st.radio(
-        "Do you smoke?", ("Yes", "No"),
-    )
+        smoke = st.radio(
+            "**Do you smoke?**", ("Yes", "No"),
+        )
 
-    water = st.radio(
-        "How many liters of water do you drink daily?", ("Less than a liter", "Between 1 and 2 L", "More than 2 L"),
-    )
+    with c2:
+        water = st.radio(
+            "**How many liters of water do you drink daily?**", ("Less than a liter", "Between 1 and 2 L", "More than 2 L"),
+        )
+    
+        monitor = st.radio(
+            "**Do you monitor the calories you eat daily?**", ("Yes", "No"),
+        )
 
-    monitor = st.radio(
-        "Do you monitor the calories you eat daily?", ("Yes", "No"),
-    )
+        pysical = st.radio(
+            "**How often do you have physical activity?**", ("I do not", "1 or 2 days", "2 or 4 days", "4 or 5 days"),
+        )
 
-    pysical = st.radio(
-        "How often do you have physical activity?", ("I do not", "1 or 2 days", "2 or 4 days", "4 or 5 days"),
-    )
+        screen = st.radio(
+            "**How much time do you use technological devices such as cell phone, videogames, television, computer and others?**", ("0-2 hours", "3-5 hours", "More than 5 hours"),
+        )
 
-    screen = st.radio(
-        "How much time do you use technological devices such as cell phone, videogames, television, computer and others?", ("0-2 hours", "3-5 hours", "More than 5 hours"),
-    )
+        alcohol = st.radio(
+            "**How often do you drink alcohol?**", ("I do not drink", "Sometimes", "Frequently", "Always"),
+        )
 
-    alcohol = st.radio(
-        "How often do you drink alcohol?", ("I do not drink", "Sometimes", "Frequently", "Always"),
-    )
-
-    transport = st.radio(
-        "Which transportation do you usually use?", ("Automobile", "Motorbike", "Bike", "Public Transportation", "Walking"),
-    )
+        transport = st.radio(
+            "**Which transportation do you usually use?**", ("Automobile", "Motorbike", "Bike", "Public Transportation", "Walking"),
+        )
 
   
 
@@ -205,7 +208,7 @@ if pred:
     #show the probability for each class
     prediction_proba = loaded_model.predict_proba(df_copy)
     proba_df = pd.DataFrame(prediction_proba, columns=[obesity_levels[i] for i in range(len(obesity_levels))])
-    st.write("### Prediction Probabilities for each class:")
+    st.write("### Class Probabilities")
     # Display the probabilities as a bar chart in ordered from lowest to highest
 
     st.bar_chart(proba_df.T, horizontal=True, color="#0072b2")

@@ -106,47 +106,42 @@ def health_score(p: np.ndarray) -> float:
 # -------------------------------
 # SHAP Summary Plot (same content; smaller fonts/figure)
 # -------------------------------
-st.markdown('<div id="SHAP Summary Plot"></div>', unsafe_allow_html=True)
-st.subheader("SHAP Summary Plot")
 
-try:
-    sv_summary, _ = get_per_class_shap(shap_values, class_idx=int(prediction[0]))
+# Load model
+loaded_model = None 
+prediction = None
+user_data = None
 
-    # compact layout (content unchanged)
-    plt.rcParams.update({
-        "font.size": 6,
-        "axes.titlesize": 6,
-        "axes.labelsize": 6,
-        "xtick.labelsize": 6,
-        "ytick.labelsize": 6,
-    })
-    shap.summary_plot(sv_summary, user_data, show=False, plot_type="bar")
-    fig = plt.gcf()
-    fig.set_size_inches(6, 3)
-    plt.tight_layout()
-    st.pyplot(fig, clear_figure=True, use_container_width=False)
+if "prediction" in st.session_state and "loaded_model" in st.session_state and "user_data" in st.session_state:
+    prediction = st.session_state.prediction
+    loaded_model = st.session_state.loaded_model
+    user_data = st.session_state.user_data
+    explainer = shap.TreeExplainer(loaded_model)
+    shap_values = explainer.shap_values(user_data)
 
-except Exception as e:
-    st.warning(f"SHAP summary plot failed: {e}")
+    st.markdown('<div id="SHAP Summary Plot"></div>', unsafe_allow_html=True)
+    st.write("## SHAP Summary Plot")
+    fig, ax = plt.subplots()
+    shap.summary_plot(shap_values, user_data, max_display=14,  plot_size=[10,4], class_names= ['Insufficient Weight','Normal Weight','Overweight Level I','Overweight Level II', 'Obesity Type I','Obesity Type II', 'Obesity Type III'] , show=False, plot_type="bar")
+    st.pyplot(fig)
+    st.write("The SHAP summary plot above shows the average impact of each feature on the model's predictions across all classes. Features are ranked by their importance, with the most influential features at the top. The length of each bar indicates the magnitude of the feature's contribution to the prediction, averaged over all samples.")
 
-# -------------------------------
-# SHAP Force Plot
-# -------------------------------
-st.markdown('<div id="SHAP Force Plot"></div>', unsafe_allow_html=True)
-st.subheader("SHAP Force Plot")
+    st.markdown('<div id="SHAP Force Plot"></div>', unsafe_allow_html=True)
+    st.write("## SHAP Force Plot")
+    ## st.pyplot(shap.plots.force(explainer.expected_value[prediction[0]], shap_values[:, :, prediction[0]], user_data.iloc[0, :] ,matplotlib=True))
+    st_shap(shap.force_plot(explainer.expected_value[prediction[0]], shap_values[:, :, prediction[0]], user_data.iloc[0, :]), height=200, width=965)
+    st.write("This plot provides a detailed explanation of the model's prediction for the given specific input data. It visualizes how each feature contributes to pushing the prediction from the base value (the average model output) to the final predicted value for the input. Features that increase the prediction are shown in red, while those that decrease it are shown in blue. The width of each arrow represents the magnitude of the feature's impact on the prediction")
 
-try:
-    st_shap(
-        shap.force_plot(
-            explainer.expected_value[int(prediction[0])],
-            shap_values[:, :, int(prediction[0])],
-            user_data.iloc[0, :]
-        ),
-        height=200,
-        width=1000
-    )
-except Exception as ee:
-    st.warning(f"Force plot could not be rendered: {ee}")
+else:
+    st.warning("Fill in your data in the Predictive Analytics section first, then navigate back here to see the explanations.")
+
+   
+
+
+
+
+
+
 
 # -------------------------------
 # What-if / Counterfactual Analysis
@@ -200,13 +195,12 @@ base_sev  = severity_score(base_prob)
 base_hs   = health_score_from_severity(base_sev)
 base_cls  = CLASSES[int(np.argmax(base_prob))]
 
-m1, m2, m3 = st.columns(3)
+m1, m2= st.columns(2)
 with m1:
     st.metric("Predicted class", base_cls)
 with m2:
     st.metric("Health Score (0–100 ↑)", f"{base_hs:.1f}")
-with m3:
-    st.metric("Severity (0–6 ↓)", f"{base_sev:.2f}")
+
 
 
 # 4-column layout for selectors
@@ -337,6 +331,7 @@ st.caption("⚠️ Counterfactual changes are hypothetical and for learning only
 
 with st.container(border=True):
     st.markdown(
-        "**Health Score (↑ better):** a linear transformation of the model’s expected obesity level (Severity, 0–6, lower is better) into a 0–100 scale, where a higher score indicates a healthier predicted outcome."
+        "**Health Score (↑ better):** a linear transformation of the model’s expected obesity level into a 0–100 scale, where a higher score indicates a healthier predicted outcome."
     )
-    st.latex(r"\text{Severity}=\sum_{i=0}^{6} p_i\, i \quad\text{and}\quad \text{HealthScore}=100\!\left(1-\frac{\text{Severity}}{6}\right)")
+    # st.latex(r"\text{Severity}=\sum_{i=0}^{6} p_i\, i \quad\text{and}\quad \text{HealthScore}=100\!\left(1-\frac{\text{Severity}}{6}\right)")
+    st.latex(r"\text{HealthScore}=100\!\left(1-\frac{\sum_{i=0}^{6} p_i\, i}{6}\right)")
